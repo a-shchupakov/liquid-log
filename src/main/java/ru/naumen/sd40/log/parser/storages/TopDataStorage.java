@@ -31,7 +31,7 @@ public class TopDataStorage implements IDataStorage
         memStat.addValue(mem);
     }
 
-    public boolean isNan()
+    public boolean isNaN()
     {
         return laStat.getN() == 0 && cpuStat.getN() == 0 && memStat.getN() == 0;
     }

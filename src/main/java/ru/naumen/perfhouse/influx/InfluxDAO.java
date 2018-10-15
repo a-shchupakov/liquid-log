@@ -86,28 +86,28 @@ public class InfluxDAO
         return BatchPoints.database(dbName).build();
     }
 
-    public void addSdngFields(Builder builder, ActionDataStorage dones, ErrorDataStorage errors)
+    public Builder addSdngFields(Builder builder, ActionDataStorage dones, ErrorDataStorage errors)
     {
         //@formatter:off
-        builder
-            .addField(COUNT, dones.getCount())
-            .addField("min", dones.getMin())
-            .addField(MEAN, dones.getMean())
-            .addField(STDDEV, dones.getStddev())
-            .addField(PERCENTILE50, dones.getPercent50())
-            .addField(PERCENTILE95, dones.getPercent95())
-            .addField(PERCENTILE99, dones.getPercent99())
-            .addField(PERCENTILE999, dones.getPercent999())
-            .addField(MAX, dones.getMax())
-            .addField(ERRORS, errors.getErrorCount())
-            .addField(ADD_ACTIONS, dones.getAddObjectActions())
-            .addField(EDIT_ACTIONS, dones.getEditObjectsActions())
-            .addField(LIST_ACTIONS, dones.getListActions())
-            .addField(COMMENT_ACTIONS, dones.getCommentActions())
-            .addField(GET_FORM_ACTIONS, dones.getFormActions())
-            .addField(GET_DT_OBJECT_ACTIONS, dones.getDtObjectActions())
-            .addField(SEARCH_ACTIONS, dones.getSearchActions())
-            .addField(GET_CATALOG_ACTIONS, dones.getCatalogsActions());
+        return builder
+                    .addField(COUNT, dones.getCount())
+                    .addField("min", dones.getMin())
+                    .addField(MEAN, dones.getMean())
+                    .addField(STDDEV, dones.getStddev())
+                    .addField(PERCENTILE50, dones.getPercent50())
+                    .addField(PERCENTILE95, dones.getPercent95())
+                    .addField(PERCENTILE99, dones.getPercent99())
+                    .addField(PERCENTILE999, dones.getPercent999())
+                    .addField(MAX, dones.getMax())
+                    .addField(ERRORS, errors.getErrorCount())
+                    .addField(ADD_ACTIONS, dones.getAddObjectActions())
+                    .addField(EDIT_ACTIONS, dones.getEditObjectsActions())
+                    .addField(LIST_ACTIONS, dones.getListActions())
+                    .addField(COMMENT_ACTIONS, dones.getCommentActions())
+                    .addField(GET_FORM_ACTIONS, dones.getFormActions())
+                    .addField(GET_DT_OBJECT_ACTIONS, dones.getDtObjectActions())
+                    .addField(SEARCH_ACTIONS, dones.getSearchActions())
+                    .addField(GET_CATALOG_ACTIONS, dones.getCatalogsActions());
 
         //@formatter:on
     }
@@ -141,21 +141,21 @@ public class InfluxDAO
         }
     }
 
-    public void addGcFields(Builder builder, GcDataStorage dataStorage) {
-        builder
-            .addField(GCTIMES, dataStorage.getGcTimes())
-            .addField(AVARAGE_GC_TIME, dataStorage.getCalculatedAvg())
-            .addField(MAX_GC_TIME, dataStorage.getMaxGcTime());
+    public Builder addGcFields(Builder builder, GcDataStorage dataStorage) {
+        return builder
+                    .addField(GCTIMES, dataStorage.getGcTimes())
+                    .addField(AVARAGE_GC_TIME, dataStorage.getCalculatedAvg())
+                    .addField(MAX_GC_TIME, dataStorage.getMaxGcTime());
     }
 
-    public void addTopFields(Builder builder, TopDataStorage dataStorage) {
-        builder
-            .addField(AVG_LA, dataStorage.getAvgLa())
-            .addField(AVG_CPU, dataStorage.getAvgCpuUsage())
-            .addField(AVG_MEM, dataStorage.getAvgMemUsage())
-            .addField(MAX_LA, dataStorage.getMaxLa())
-            .addField(MAX_CPU, dataStorage.getMaxCpu())
-            .addField(MAX_MEM, dataStorage.getMaxMem());
+    public Builder addTopFields(Builder builder, TopDataStorage dataStorage) {
+        return builder
+                    .addField(AVG_LA, dataStorage.getAvgLa())
+                    .addField(AVG_CPU, dataStorage.getAvgCpuUsage())
+                    .addField(AVG_MEM, dataStorage.getAvgMemUsage())
+                    .addField(MAX_LA, dataStorage.getMaxLa())
+                    .addField(MAX_CPU, dataStorage.getMaxCpu())
+                    .addField(MAX_MEM, dataStorage.getMaxMem());
     }
 
     public void storeData(BatchPoints batch, String dbName, long date, IDataStorage dataStorage) {
@@ -165,16 +165,24 @@ public class InfluxDAO
             SdngDataStorage sdngDataStorage = ((SdngDataStorage) dataStorage);
             sdngDataStorage.getActionDataStorage().calculate();
             if (!sdngDataStorage.getActionDataStorage().isNaN())
-                addSdngFields(builder, sdngDataStorage.getActionDataStorage(), sdngDataStorage.getErrorDataStorage());
+                builder = addSdngFields(builder, sdngDataStorage.getActionDataStorage(), sdngDataStorage.getErrorDataStorage());
+            else
+                return;
         }
         else if (dataStorage instanceof GcDataStorage) {
-            if (!((GcDataStorage) dataStorage).isNan())
-                addGcFields(builder, (GcDataStorage) dataStorage);
+            if (!((GcDataStorage) dataStorage).isNaN())
+                builder = addGcFields(builder, (GcDataStorage) dataStorage);
+            else
+                return;
         }
         else if (dataStorage instanceof TopDataStorage) {
-            if (!((TopDataStorage) dataStorage).isNan())
-                addTopFields(builder, (TopDataStorage) dataStorage);
+            if (!((TopDataStorage) dataStorage).isNaN())
+                builder = addTopFields(builder, (TopDataStorage) dataStorage);
+            else
+                return;
         }
+        else
+            return;
 
         Point point = builder.build();
         if (batch != null)

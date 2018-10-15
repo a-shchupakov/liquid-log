@@ -27,7 +27,7 @@ public class GcDataStorage implements IDataStorage {
         return roundToTwoPlaces(getSafeDouble(ds.getMax()));
     }
 
-    public boolean isNan()
+    public boolean isNaN()
     {
         return getGcTimes() == 0;
     }

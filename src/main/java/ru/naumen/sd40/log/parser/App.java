@@ -99,7 +99,7 @@ public class App
         }
 
         BatchPoints finalPoints = points;
-        data.forEach((k, dataStorage) ->  finalStorage.storeData(finalPoints, finalInfluxDb, k, dataStorage));
+        data.forEach((k, dataStorage) -> finalStorage.storeData(finalPoints, finalInfluxDb, k, dataStorage));
 
         storage.writeBatch(points);
     }
