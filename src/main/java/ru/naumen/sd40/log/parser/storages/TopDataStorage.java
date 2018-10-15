@@ -1,16 +1,16 @@
-package ru.naumen.sd40.log.parser;
+package ru.naumen.sd40.log.parser.storages;
+
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import static ru.naumen.sd40.log.parser.NumberUtils.getSafeDouble;
 import static ru.naumen.sd40.log.parser.NumberUtils.roundToTwoPlaces;
-
-import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;;
 
 /**
  * Cpu usage data, acquired from top output
  * @author dkolmogortsev
  *
  */
-public class TopData
+public class TopDataStorage implements IDataStorage
 {
     private DescriptiveStatistics laStat = new DescriptiveStatistics();
     private DescriptiveStatistics cpuStat = new DescriptiveStatistics();

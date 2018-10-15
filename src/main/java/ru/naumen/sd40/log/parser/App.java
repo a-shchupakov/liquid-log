@@ -1,18 +1,26 @@
 package ru.naumen.sd40.log.parser;
 
+import org.influxdb.dto.BatchPoints;
+import ru.naumen.perfhouse.influx.InfluxDAO;
+import ru.naumen.sd40.log.parser.parsers.ParsingUtils;
+import ru.naumen.sd40.log.parser.parsers.data.GCDataParser;
+import ru.naumen.sd40.log.parser.parsers.data.IDataParser;
+import ru.naumen.sd40.log.parser.parsers.data.SdngDataParser;
+import ru.naumen.sd40.log.parser.parsers.data.TopDataParser;
+import ru.naumen.sd40.log.parser.parsers.time.GCTimeParser;
+import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
+import ru.naumen.sd40.log.parser.parsers.time.SdngTimeParser;
+import ru.naumen.sd40.log.parser.parsers.time.TopTimeParser;
+import ru.naumen.sd40.log.parser.storages.GcDataStorage;
+import ru.naumen.sd40.log.parser.storages.IDataStorage;
+import ru.naumen.sd40.log.parser.storages.SdngDataStorage;
+import ru.naumen.sd40.log.parser.storages.TopDataStorage;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.HashMap;
-
-import org.influxdb.dto.BatchPoints;
-
-import ru.naumen.perfhouse.influx.InfluxDAO;
-import ru.naumen.sd40.log.parser.parsers.time.GCTimeParser;
-import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
-import ru.naumen.sd40.log.parser.parsers.time.SdngTimeParser;
-import ru.naumen.sd40.log.parser.parsers.time.TopTimeParser;
 
 /**
  * Created by doki on 22.10.16.
@@ -43,6 +51,7 @@ public class App
             storage.init();
             storage.connectToDB(influxDb);
         }
+
         InfluxDAO finalStorage = storage;
         String finalInfluxDb = influxDb;
         BatchPoints points = null;
@@ -53,74 +62,45 @@ public class App
         }
 
         String log = args[0];
+        HashMap<Long, IDataStorage> data = new HashMap<>();
 
-        HashMap<Long, DataSet> data = new HashMap<>();
         String mode = System.getProperty("parse.mode", "");
         switch (mode)
         {
         case "sdng":
             //Parse sdng
             ITimeParser sdngTimeParser = new SdngTimeParser();
+            IDataParser sdngDataParser = new SdngDataParser();
             configureTimeZone(args, sdngTimeParser);
-            parseEntries(log, sdngTimeParser, data);
+            parseEntries(log, sdngTimeParser, sdngDataParser, data);
             break;
         case "gc":
             //Parse gc log
             ITimeParser gcTimeParser = new GCTimeParser();
+            IDataParser gcDataParser = new GCDataParser();
             configureTimeZone(args, gcTimeParser);
-            parseEntries(log, gcTimeParser, data);
+            parseEntries(log, gcTimeParser, gcDataParser, data);
             break;
         case "top":
             //Parse top
-            ITimeParser topTimeParser = new TopTimeParser(log, data);
+            ITimeParser topTimeParser = new TopTimeParser(log);
+            IDataParser topDataParser = new TopDataParser();
             configureTimeZone(args, topTimeParser);
-            try (BufferedReader br = new BufferedReader(new FileReader(log)))
-            {
-                String line;
-                while ((line = br.readLine()) != null)
-                {
-                    topTimeParser.parseLine(line);
-                }
-            }
+            parseEntries(log, topTimeParser, topDataParser, data);
             break;
         default:
             throw new IllegalArgumentException(
-                    "Unknown parse mode! Availiable modes: sdng, gc, top. Requested mode: " + mode);
+                    "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + mode);
         }
 
         if (System.getProperty("NoCsv") == null)
         {
             System.out.print("Timestamp;Actions;Min;Mean;Stddev;50%%;95%%;99%%;99.9%%;Max;Errors\n");
         }
+
         BatchPoints finalPoints = points;
-        data.forEach((k, set) ->
-        {
-            ActionDoneParser dones = set.getActionsDone();
-            dones.calculate();
-            ErrorParser erros = set.getErrors();
-            if (System.getProperty("NoCsv") == null)
-            {
-                System.out.print(String.format("%d;%d;%f;%f;%f;%f;%f;%f;%f;%f;%d\n", k, dones.getCount(),
-                        dones.getMin(), dones.getMean(), dones.getStddev(), dones.getPercent50(), dones.getPercent95(),
-                        dones.getPercent99(), dones.getPercent999(), dones.getMax(), erros.getErrorCount()));
-            }
-            if (!dones.isNan())
-            {
-                finalStorage.storeActionsFromLog(finalPoints, finalInfluxDb, k, dones, erros);
-            }
+        data.forEach((k, dataStorage) ->  finalStorage.storeData(finalPoints, finalInfluxDb, k, dataStorage));
 
-            GCParser gc = set.getGc();
-            if (!gc.isNan())
-            {
-                finalStorage.storeGc(finalPoints, finalInfluxDb, k, gc);
-            }
-
-            TopData cpuData = set.cpuData();
-            if (!cpuData.isNan())
-            {
-                finalStorage.storeTop(finalPoints, finalInfluxDb, k, cpuData);
-            }
-        });
         storage.writeBatch(points);
     }
     private static void configureTimeZone(String[] args,ITimeParser parser) {
@@ -130,26 +110,34 @@ public class App
         }
     }
 
-    private static void parseEntries(String log, ITimeParser timeParser, HashMap<Long, DataSet> data) throws IOException, ParseException{
+    private static void parseEntries(String log, ITimeParser timeParser, IDataParser dataParser,
+                                     HashMap<Long, IDataStorage> data) throws IOException, ParseException
+    {
         try (BufferedReader br = new BufferedReader(new FileReader(log)))
         {
             String line;
             while ((line = br.readLine()) != null)
             {
                 long time = timeParser.parseLine(line);
-
                 if (time == 0)
-                {
                     continue;
-                }
 
-                int min5 = 5 * 60 * 1000;
-                long count = time / min5;
-                long key = count * min5;
+                long key = ParsingUtils.roundToFiveMins(time);
+
+                IDataStorage storage;
                 if (timeParser instanceof GCTimeParser)
-                    data.computeIfAbsent(key, k -> new DataSet()).parseGcLine(line);
+                    storage = data.computeIfAbsent(key, k -> new GcDataStorage());
+
                 else if (timeParser instanceof SdngTimeParser)
-                    data.computeIfAbsent(key, k -> new DataSet()).parseLine(line);
+                    storage = data.computeIfAbsent(key, k -> new SdngDataStorage());
+
+                else if (timeParser instanceof TopTimeParser)
+                    storage = data.computeIfAbsent(key, k -> new TopDataStorage());
+
+                else
+                    continue;
+
+                dataParser.parseLine(line, storage);
             }
         }
     }
