@@ -1,6 +1,5 @@
 package ru.naumen.sd40.log.parser.parsers.data;
 
-import ru.naumen.sd40.log.parser.storages.IDataStorage;
 import ru.naumen.sd40.log.parser.storages.TopDataStorage;
 
 import java.util.regex.Matcher;
@@ -11,9 +10,9 @@ public class TopDataParser implements IDataParser  {
     private Pattern cpuAndMemPattern = Pattern
             .compile("^ *\\d+ \\S+ +\\S+ +\\S+ +\\S+ +\\S+ +\\S+ +\\S+ \\S+ +(\\S+) +(\\S+) +\\S+ java");
     @Override
-    public void parseLine(String line, IDataStorage dataStorage) {
+    public void parseLine(String line, DataSet dataSet) {
         //get la
-        TopDataStorage topDataStorage = (TopDataStorage) dataStorage;
+        TopDataStorage topDataStorage = dataSet.getCpuData();
         Matcher la = laPattern.matcher(line);
         if (la.find())
         {

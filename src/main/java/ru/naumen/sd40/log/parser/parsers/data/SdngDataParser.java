@@ -2,8 +2,6 @@ package ru.naumen.sd40.log.parser.parsers.data;
 
 import ru.naumen.sd40.log.parser.storages.ActionDataStorage;
 import ru.naumen.sd40.log.parser.storages.ErrorDataStorage;
-import ru.naumen.sd40.log.parser.storages.IDataStorage;
-import ru.naumen.sd40.log.parser.storages.SdngDataStorage;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -23,9 +21,9 @@ public class SdngDataParser implements IDataParser {
     private static Pattern fatalRegEx = Pattern.compile("^\\d+ \\[.+?\\] \\(.+?\\) FATAL");
 
     @Override
-    public void parseLine(String line, IDataStorage dataStorage) {
-        parseActionLine(line, ((SdngDataStorage) dataStorage).getActionDataStorage());
-        parseErrorLine(line, ((SdngDataStorage) dataStorage).getErrorDataStorage());
+    public void parseLine(String line, DataSet dataSet) {
+        parseActionLine(line, dataSet.getActionsData());
+        parseErrorLine(line, dataSet.getErrorData());
     }
 
     private void parseActionLine(String line, ActionDataStorage dataStorage) {

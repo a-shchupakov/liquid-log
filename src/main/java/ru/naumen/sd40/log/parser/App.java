@@ -3,18 +3,12 @@ package ru.naumen.sd40.log.parser;
 import org.influxdb.dto.BatchPoints;
 import ru.naumen.perfhouse.influx.InfluxDAO;
 import ru.naumen.sd40.log.parser.parsers.ParsingUtils;
-import ru.naumen.sd40.log.parser.parsers.data.GCDataParser;
-import ru.naumen.sd40.log.parser.parsers.data.IDataParser;
-import ru.naumen.sd40.log.parser.parsers.data.SdngDataParser;
-import ru.naumen.sd40.log.parser.parsers.data.TopDataParser;
+import ru.naumen.sd40.log.parser.parsers.data.*;
 import ru.naumen.sd40.log.parser.parsers.time.GCTimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.SdngTimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.TopTimeParser;
-import ru.naumen.sd40.log.parser.storages.GcDataStorage;
 import ru.naumen.sd40.log.parser.storages.IDataStorage;
-import ru.naumen.sd40.log.parser.storages.SdngDataStorage;
-import ru.naumen.sd40.log.parser.storages.TopDataStorage;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -59,7 +53,7 @@ public class App
         }
 
         String log = args[0];
-        HashMap<Long, IDataStorage> data = new HashMap<>();
+        HashMap<Long, DataSet> data = new HashMap<>();
 
         String mode = System.getProperty("parse.mode", "");
 
@@ -85,7 +79,7 @@ public class App
     }
 
     private static void parseEntries(String log, ITimeParser timeParser, IDataParser dataParser,
-                                     HashMap<Long, IDataStorage> data) throws IOException, ParseException
+                                     HashMap<Long, DataSet> data) throws IOException, ParseException
     {
         try (BufferedReader br = new BufferedReader(new FileReader(log)))
         {
@@ -98,20 +92,8 @@ public class App
 
                 long key = ParsingUtils.roundToFiveMins(time);
 
-                IDataStorage storage;
-                if (timeParser instanceof GCTimeParser)
-                    storage = data.computeIfAbsent(key, k -> new GcDataStorage());
-
-                else if (timeParser instanceof SdngTimeParser)
-                    storage = data.computeIfAbsent(key, k -> new SdngDataStorage());
-
-                else if (timeParser instanceof TopTimeParser)
-                    storage = data.computeIfAbsent(key, k -> new TopDataStorage());
-
-                else
-                    continue;
-
-                dataParser.parseLine(line, storage);
+                DataSet dataSet = data.computeIfAbsent(key, k -> new DataSet());
+                dataParser.parseLine(line, dataSet);
             }
         }
     }
@@ -146,7 +128,7 @@ public class App
         }
     }
 
-    private static void saveToDB(BatchPoints points, HashMap<Long, IDataStorage> data,
+    private static void saveToDB(BatchPoints points, HashMap<Long, DataSet> data,
                                  InfluxDAO storage, String influxDb) {
         data.forEach((k, dataStorage) -> storage.storeData(points, influxDb, k, dataStorage));
         storage.writeBatch(points);

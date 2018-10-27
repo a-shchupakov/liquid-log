@@ -10,8 +10,8 @@ public class GCDataParser implements IDataParser  {
     private static final Pattern gcExecutionTime = Pattern.compile(".*real=(.*)secs.*");
 
     @Override
-    public void parseLine(String line, IDataStorage dataStorage) {
-        GcDataStorage gcDataStorage = (GcDataStorage) dataStorage;
+    public void parseLine(String line, DataSet dataSet) {
+        GcDataStorage gcDataStorage = dataSet.getGcData();
 
         Matcher matcher = gcExecutionTime.matcher(line);
         if (matcher.find())

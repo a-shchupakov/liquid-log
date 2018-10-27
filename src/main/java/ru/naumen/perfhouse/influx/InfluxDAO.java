@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.naumen.perfhouse.statdata.Constants;
+import ru.naumen.sd40.log.parser.parsers.data.DataSet;
 import ru.naumen.sd40.log.parser.storages.*;
 
 import javax.annotation.PostConstruct;
@@ -86,7 +87,7 @@ public class InfluxDAO
         return BatchPoints.database(dbName).build();
     }
 
-    public Builder addSdngFields(Builder builder, ActionDataStorage dones, ErrorDataStorage errors)
+    private Builder addSdngFields(Builder builder, ActionDataStorage dones, ErrorDataStorage errors)
     {
         //@formatter:off
         return builder
@@ -141,14 +142,14 @@ public class InfluxDAO
         }
     }
 
-    public Builder addGcFields(Builder builder, GcDataStorage dataStorage) {
+    private Builder addGcFields(Builder builder, GcDataStorage dataStorage) {
         return builder
                     .addField(GCTIMES, dataStorage.getGcTimes())
                     .addField(AVARAGE_GC_TIME, dataStorage.getCalculatedAvg())
                     .addField(MAX_GC_TIME, dataStorage.getMaxGcTime());
     }
 
-    public Builder addTopFields(Builder builder, TopDataStorage dataStorage) {
+    private Builder addTopFields(Builder builder, TopDataStorage dataStorage) {
         return builder
                     .addField(AVG_LA, dataStorage.getAvgLa())
                     .addField(AVG_CPU, dataStorage.getAvgCpuUsage())
@@ -158,31 +159,19 @@ public class InfluxDAO
                     .addField(MAX_MEM, dataStorage.getMaxMem());
     }
 
-    public void storeData(BatchPoints batch, String dbName, long date, IDataStorage dataStorage) {
+    public void storeData(BatchPoints batch, String dbName, long date, DataSet dataSet) {
         Builder builder = Point.measurement(Constants.MEASUREMENT_NAME).time(date, TimeUnit.MILLISECONDS);
 
-        if (dataStorage instanceof SdngDataStorage) {
-            SdngDataStorage sdngDataStorage = ((SdngDataStorage) dataStorage);
-            sdngDataStorage.getActionDataStorage().calculate();
-            if (!sdngDataStorage.getActionDataStorage().isNaN())
-                builder = addSdngFields(builder, sdngDataStorage.getActionDataStorage(), sdngDataStorage.getErrorDataStorage());
-            else
-                return;
-        }
-        else if (dataStorage instanceof GcDataStorage) {
-            if (!((GcDataStorage) dataStorage).isNaN())
-                builder = addGcFields(builder, (GcDataStorage) dataStorage);
-            else
-                return;
-        }
-        else if (dataStorage instanceof TopDataStorage) {
-            if (!((TopDataStorage) dataStorage).isNaN())
-                builder = addTopFields(builder, (TopDataStorage) dataStorage);
-            else
-                return;
-        }
-        else
-            return;
+        ActionDataStorage actionDataStorage = dataSet.getActionsData();
+        actionDataStorage.calculate();
+        if (!actionDataStorage.isNaN())
+            builder = addSdngFields(builder, actionDataStorage, dataSet.getErrorData());
+
+        if (!dataSet.getGcData().isNaN())
+            builder = addGcFields(builder, dataSet.getGcData());
+
+        if (!dataSet.getCpuData().isNaN())
+            builder = addTopFields(builder, dataSet.getCpuData());
 
         Point point = builder.build();
         if (batch != null)
