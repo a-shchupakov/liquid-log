@@ -52,10 +52,7 @@ public class App
             storage.connectToDB(influxDb);
         }
 
-        InfluxDAO finalStorage = storage;
-        String finalInfluxDb = influxDb;
         BatchPoints points = null;
-
         if (storage != null)
         {
             points = storage.startBatchPoints(influxDb);
@@ -65,43 +62,20 @@ public class App
         HashMap<Long, IDataStorage> data = new HashMap<>();
 
         String mode = System.getProperty("parse.mode", "");
-        switch (mode)
-        {
-        case "sdng":
-            //Parse sdng
-            ITimeParser sdngTimeParser = new SdngTimeParser();
-            IDataParser sdngDataParser = new SdngDataParser();
-            configureTimeZone(args, sdngTimeParser);
-            parseEntries(log, sdngTimeParser, sdngDataParser, data);
-            break;
-        case "gc":
-            //Parse gc log
-            ITimeParser gcTimeParser = new GCTimeParser();
-            IDataParser gcDataParser = new GCDataParser();
-            configureTimeZone(args, gcTimeParser);
-            parseEntries(log, gcTimeParser, gcDataParser, data);
-            break;
-        case "top":
-            //Parse top
-            ITimeParser topTimeParser = new TopTimeParser(log);
-            IDataParser topDataParser = new TopDataParser();
-            configureTimeZone(args, topTimeParser);
-            parseEntries(log, topTimeParser, topDataParser, data);
-            break;
-        default:
-            throw new IllegalArgumentException(
-                    "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + mode);
-        }
+
+        ITimeParser timeParser = buildTimeParser(log, mode);
+        IDataParser dataParser = buildDataParser(mode);
+
+        configureTimeZone(args, timeParser);
+        parseEntries(log, timeParser, dataParser, data);
 
         if (System.getProperty("NoCsv") == null)
         {
             System.out.print("Timestamp;Actions;Min;Mean;Stddev;50%%;95%%;99%%;99.9%%;Max;Errors\n");
         }
 
-        BatchPoints finalPoints = points;
-        data.forEach((k, dataStorage) -> finalStorage.storeData(finalPoints, finalInfluxDb, k, dataStorage));
+        saveToDB(points, data, storage, influxDb);
 
-        storage.writeBatch(points);
     }
     private static void configureTimeZone(String[] args,ITimeParser parser) {
         if (args.length > 2)
@@ -140,5 +114,41 @@ public class App
                 dataParser.parseLine(line, storage);
             }
         }
+    }
+
+    private static ITimeParser buildTimeParser(String log, String parseMode) {
+        switch (parseMode)
+        {
+            case "sdng":
+                return new SdngTimeParser();
+            case "gc":
+                return new GCTimeParser();
+            case "top":
+                return new TopTimeParser(log);
+            default:
+                throw new IllegalArgumentException(
+                        "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
+        }
+    }
+
+    private static IDataParser buildDataParser(String parseMode) {
+        switch (parseMode)
+        {
+            case "sdng":
+                return new SdngDataParser();
+            case "gc":
+                return new GCDataParser();
+            case "top":
+                return new TopDataParser();
+            default:
+                throw new IllegalArgumentException(
+                        "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
+        }
+    }
+
+    private static void saveToDB(BatchPoints points, HashMap<Long, IDataStorage> data,
+                                 InfluxDAO storage, String influxDb) {
+        data.forEach((k, dataStorage) -> storage.storeData(points, influxDb, k, dataStorage));
+        storage.writeBatch(points);
     }
 }
