@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 public class TopTimeParser implements ITimeParser {private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMddHH:mm");
     private String dataDate;
+    private long currentTime = 0;
 
     private Pattern timeRegex = Pattern.compile("^_+ (\\S+)");
 
@@ -33,10 +34,10 @@ public class TopTimeParser implements ITimeParser {private SimpleDateFormat sdf 
     public long parseLine(String line) throws ParseException
     {
         //check time
-        long time = 0;
         Matcher matcher = timeRegex.matcher(line);
-        if (matcher.find())
-            time = sdf.parse(dataDate + matcher.group(1)).getTime();
-        return time;
+        if (matcher.find()) {
+            currentTime = sdf.parse(dataDate + matcher.group(1)).getTime();
+        }
+        return currentTime;
     }
 }
