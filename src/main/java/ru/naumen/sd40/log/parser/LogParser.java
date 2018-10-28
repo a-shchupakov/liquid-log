@@ -15,7 +15,7 @@ import java.text.ParseException;
 /**
  * Created by doki on 22.10.16.
  */
-public class App
+public class LogParser
 {
     /**
      * 

@@ -4,7 +4,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
-import ru.naumen.sd40.log.parser.App;
+import ru.naumen.sd40.log.parser.LogParser;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -22,7 +22,7 @@ public class PerfhouseApplication extends SpringBootServletInitializer
     {
         if (System.getProperty("Parser") != null)
         {
-            App.main(args);
+            LogParser.main(args);
         }
         else
         {
