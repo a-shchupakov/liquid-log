@@ -29,7 +29,7 @@ import static ru.naumen.perfhouse.statdata.Constants.Top.*;
  * Created by doki on 24.10.16.
  */
 @Component
-public class InfluxDAO
+public class InfluxDAO implements IDataBase
 {
     private String influxHost;
 
@@ -159,7 +159,7 @@ public class InfluxDAO
                     .addField(MAX_MEM, dataStorage.getMaxMem());
     }
 
-    public void storeData(BatchPoints batch, String dbName, long date, DataSet dataSet) {
+    public void storeData(String dbName, long date, DataSet dataSet) {
         Builder builder = Point.measurement(Constants.MEASUREMENT_NAME).time(date, TimeUnit.MILLISECONDS);
 
         ActionDataStorage actionDataStorage = dataSet.getActionsData();
@@ -174,18 +174,15 @@ public class InfluxDAO
             builder = addTopFields(builder, dataSet.getCpuData());
 
         Point point = builder.build();
-        if (batch != null)
-        {
-            batch.getPoints().add(point);
-        }
-        else
-        {
-            influx.write(dbName, "autogen", point);
-        }
+        writePoint(dbName, point);
     }
 
-    public void writeBatch(BatchPoints batch)
+    private void writeBatch(BatchPoints batch)
     {
         influx.write(batch);
+    }
+
+    private void writePoint(String dbName, Point point) {
+        influx.write(dbName, "autogen", point);
     }
 }
