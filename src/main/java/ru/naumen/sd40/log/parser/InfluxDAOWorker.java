@@ -29,10 +29,12 @@ public class InfluxDAOWorker implements Closeable {
     }
 
     public DataSet getDataSet(long key) {
-        if (key != currentKey) {
-            saveToDB();
-            currentDataSet = new DataSet();
+        if (currentKey == key) {
+            return currentDataSet;
         }
+        if (currentKey != -1)
+            saveToDB();
+        currentDataSet = new DataSet();
         currentKey = key;
         return currentDataSet;
     }

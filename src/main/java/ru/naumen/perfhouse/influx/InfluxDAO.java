@@ -166,12 +166,12 @@ public class InfluxDAO implements IDataBase
         actionDataStorage.calculate();
         if (!actionDataStorage.isNaN())
             builder = addSdngFields(builder, actionDataStorage, dataSet.getErrorData());
-
-        if (!dataSet.getGcData().isNaN())
+        else if (!dataSet.getGcData().isNaN())
             builder = addGcFields(builder, dataSet.getGcData());
-
-        if (!dataSet.getCpuData().isNaN())
+        else if (!dataSet.getCpuData().isNaN())
             builder = addTopFields(builder, dataSet.getCpuData());
+        else
+            return;
 
         Point point = builder.build();
         writePoint(dbName, point);
