@@ -22,7 +22,7 @@ public class PerfhouseApplication extends SpringBootServletInitializer
     {
         if (System.getProperty("Parser") != null)
         {
-            LogParser.main(args);
+            //LogParser.parseLogs(args);
         }
         else
         {

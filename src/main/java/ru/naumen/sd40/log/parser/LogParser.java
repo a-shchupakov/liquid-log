@@ -1,5 +1,6 @@
 package ru.naumen.sd40.log.parser;
 
+import org.springframework.context.annotation.Bean;
 import ru.naumen.sd40.log.parser.parsers.ParsingUtils;
 import ru.naumen.sd40.log.parser.parsers.data.*;
 import ru.naumen.sd40.log.parser.parsers.time.GCTimeParser;
@@ -17,23 +18,25 @@ import java.text.ParseException;
  */
 public class LogParser
 {
+    @Bean
+    public LogParser logParser() {
+        return new LogParser();
+    }
+
     /**
-     * 
-     * @param args [0] - sdng.log, [1] - gc.log, [2] - top, [3] - dbName, [4] timezone
+     *
      * @throws IOException
      * @throws ParseException
      */
-    public static void main(String[] args) throws IOException, ParseException
+    public void parseLogs(String log, String parseMode, String dbName, String timeZone,
+                          String host, String user, String pass) throws IOException, ParseException
     {
-        String log = args[0];
-        String mode = System.getProperty("parse.mode", "");
+        ITimeParser timeParser = buildTimeParser(log, parseMode);
+        IDataParser dataParser = buildDataParser(parseMode);
 
-        ITimeParser timeParser = buildTimeParser(log, mode);
-        IDataParser dataParser = buildDataParser(mode);
+        configureTimeZone(timeZone, timeParser);
 
-        configureTimeZone(args, timeParser);
-
-        try (InfluxDAOWorker influxDAOWorker = buildDaoWorker(args)) {
+        try (InfluxDAOWorker influxDAOWorker = buildDaoWorker(dbName,host, user, pass)) {
             parseEntries(log, timeParser, dataParser, influxDAOWorker);
         }
 
@@ -42,23 +45,23 @@ public class LogParser
             System.out.print("Timestamp;Actions;Min;Mean;Stddev;50%%;95%%;99%%;99.9%%;Max;Errors\n");
         }
     }
-    private static InfluxDAOWorker buildDaoWorker(String[] args) {
+    private InfluxDAOWorker buildDaoWorker(String dbName, String host, String user, String pass) {
         InfluxDAOWorker influxDAOWorker = null;
-        if (args.length > 1) {
-            influxDAOWorker = new InfluxDAOWorker(args[1]);
+        if (dbName != null) {
+            influxDAOWorker = new InfluxDAOWorker(dbName, host, user, pass);
             influxDAOWorker.init();
         }
         return influxDAOWorker;
     }
 
-    private static void configureTimeZone(String[] args, ITimeParser parser) {
-        if (args.length > 2)
+    private void configureTimeZone(String timeZone, ITimeParser parser) {
+        if (timeZone != null)
         {
-            parser.configureTimeZone(args[2]);
+            parser.configureTimeZone(timeZone);
         }
     }
 
-    private static void parseEntries(String log, ITimeParser timeParser, IDataParser dataParser,
+    private void parseEntries(String log, ITimeParser timeParser, IDataParser dataParser,
                                      InfluxDAOWorker influxDAOWorker) throws IOException, ParseException
     {
         try (BufferedReader br = new BufferedReader(new FileReader(log)))
@@ -78,7 +81,7 @@ public class LogParser
         }
     }
 
-    private static ITimeParser buildTimeParser(String log, String parseMode) {
+    private ITimeParser buildTimeParser(String log, String parseMode) {
         switch (parseMode)
         {
             case "sdng":
@@ -93,7 +96,7 @@ public class LogParser
         }
     }
 
-    private static IDataParser buildDataParser(String parseMode) {
+    private IDataParser buildDataParser(String parseMode) {
         switch (parseMode)
         {
             case "sdng":

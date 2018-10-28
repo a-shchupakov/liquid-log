@@ -1,3 +1,4 @@
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
 <%@ page import="java.util.Map" %>
@@ -46,6 +47,46 @@
   		<h3><strong>Attention!</strong><br>All requests for stored data are made with UTC time.<br>Requested data will be displayed in your browsers timezone.</h3>
 	</div>
 	<br>
+    <div>
+        <form action="/parse" method="post">
+            <div>
+                <label>Influx DB name
+                    <input type="text" name="dbName" placeholder="DataBase name" required>
+                </label>
+            </div>
+            <div>Parse mode<br>
+                <label>Sdng
+                    <input type="radio" name="parseMode" value="sdng" checked>
+                </label>
+            </div>
+            <div>
+                <label>Gc
+                    <input type="radio" name="parseMode" value="gc">
+                </label>
+            </div>
+            <div>
+                <label>Top
+                    <input type="radio" name="parseMode" value="top">
+                </label>
+            </div>
+            <div>
+                <label>Log file
+                    <input type="text" name="logPath" value="D:\IT\Java-naumen\sdng.log.2017-09-07" required>
+                </label>
+            </div>
+            <div>
+                <label>Timezone
+                    <input type="text" name="timezone">
+                </label>
+            </div>
+            <div>
+                <label>Trace result
+                    <input type="checkbox" name="traceResult" value="true">
+                </label>
+            </div>
+            <div><input class="btn" type="submit" value="Parse"></div>
+        </form>
+    </div>
     <h1>Client list</h1>
     <table class="table table-striped table-fixed"> <!-- table-bordered  -->
         <thead class="thead-inverse">
@@ -56,7 +97,7 @@
          <% for(String client:(List<String>)request.getAttribute("clients")) { %>
             <tr>
                 <td class="col-xs-6">
-                    <h4><span><%= client %></span></h2>
+                    <h4><span><%= client %></span></h4>
                 </td>
                 <td class="col-xs-6">
                 	<a class="btn btn-outline-primary" href='<%= ((Map)request.getAttribute("prevMonthLinks")).get(client) %>'>Previous Month</a>

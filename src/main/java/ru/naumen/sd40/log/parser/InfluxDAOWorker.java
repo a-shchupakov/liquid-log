@@ -9,13 +9,12 @@ import java.io.Closeable;
 public class InfluxDAOWorker implements Closeable {
     private String influxDb;
     private IDataBase influxStorage;
-    private long currentKey;
+    private long currentKey = -1;
     private DataSet currentDataSet;
 
-    public InfluxDAOWorker(String dbName) {
+    public InfluxDAOWorker(String dbName, String host, String user, String pass) {
         influxDb = dbName.replaceAll("-", "_");
-        influxStorage = new InfluxDAO(System.getProperty("influx.host"), System.getProperty("influx.user"),
-                System.getProperty("influx.password"));
+        influxStorage = new InfluxDAO(host, user, pass);
     }
 
     public InfluxDAOWorker(IDataBase dataBase, String dbName) {
@@ -29,10 +28,12 @@ public class InfluxDAOWorker implements Closeable {
     }
 
     public DataSet getDataSet(long key) {
-        if (key != currentKey) {
-            saveToDB();
-            currentDataSet = new DataSet();
+        if (currentKey == key) {
+            return currentDataSet;
         }
+        if (currentKey != -1)
+            saveToDB();
+        currentDataSet = new DataSet();
         currentKey = key;
         return currentDataSet;
     }
