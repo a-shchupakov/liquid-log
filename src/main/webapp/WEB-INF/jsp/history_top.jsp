@@ -1,9 +1,5 @@
 <%@page import="ru.naumen.perfhouse.statdata.Constants"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ page import="java.util.Map" %>
-<%@ page import="java.util.List" %>
-<%@ page import="java.util.Date" %>
-<%@ page import="org.influxdb.dto.QueryResult.Series" %>
 
 <html>
 
@@ -19,12 +15,14 @@
     <link rel="stylesheet" href="/css/style.css"/>
     <style>
         .col-xs-40 {
-        	width: 34%;
+            width: 34%;
         }
+
         .col-xs-10 {
-        	width: 11%;
+            width: 11%;
         }
-    }
+
+        }
     </style>
 </head>
 

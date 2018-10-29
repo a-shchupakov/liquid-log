@@ -1,13 +1,5 @@
 package ru.naumen.perfhouse.controllers;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.inject.Inject;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.json.JSONObject;
@@ -19,8 +11,14 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
-
 import ru.naumen.perfhouse.influx.InfluxDAO;
+
+import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by dkirpichenkov on 26.10.16.

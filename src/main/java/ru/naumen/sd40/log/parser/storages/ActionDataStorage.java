@@ -1,26 +1,11 @@
-package ru.naumen.sd40.log.parser;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+package ru.naumen.sd40.log.parser.storages;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
-/**
- * Created by doki on 22.10.16.
- */
-public class ActionDoneParser
-{
-    private static Set<String> EXCLUDED_ACTIONS = new HashSet<>();
+import java.util.ArrayList;
+import java.util.HashMap;
 
-    static
-    {
-        EXCLUDED_ACTIONS.add("EventAction".toLowerCase());
-    }
-
+public class ActionDataStorage implements IDataStorage {
     ArrayList<Integer> times = new ArrayList<>();
     double min;
     double mean;
@@ -44,11 +29,9 @@ public class ActionDoneParser
 
     private int searchActions = 0;
 
-    boolean nan = true;
+    boolean isNaN = true;
 
     private HashMap<String, Integer> actions = new HashMap<>();
-
-    Pattern doneRegEx = Pattern.compile("Done\\((\\d+)\\): ?(.*?Action)");
 
     public void calculate()
     {
@@ -63,12 +46,7 @@ public class ActionDoneParser
         percent999 = ds.getPercentile(99.9);
         max = ds.getMax();
         count = ds.getN();
-        nan = count == 0;
-    }
-
-    public int getListActions()
-    {
-        return getListActions;
+        isNaN = count == 0;
     }
 
     public HashMap<String, Integer> getActionsCounter()
@@ -76,44 +54,68 @@ public class ActionDoneParser
         return actions;
     }
 
+    public int getListActions()
+    {
+        return getListActions;
+    }
+    public void increaseListActions() {
+        getListActions++;
+    }
+
     public int getAddObjectActions()
     {
         return addObjectActions;
+    }
+    public void increaseAddObjectActions() {
+        addObjectActions++;
     }
 
     public int getCommentActions()
     {
         return commentActions;
     }
+    public void increaseCommentActions() {
+        commentActions++;
+    }
 
     public long getCount()
     {
         return count;
     }
-
-    public Pattern getDoneRegEx()
-    {
-        return doneRegEx;
+    public void increasetCount() {
+        count++;
     }
 
     public int getDtObjectActions()
     {
         return getDtObjectActions;
     }
+    public void increaseDtObjectActions() {
+        getDtObjectActions++;
+    }
 
     public int getEditObjectsActions()
     {
         return editObjectsActions;
+    }
+    public void increaseEditObjectsActions() {
+        editObjectsActions++;
     }
 
     public int getFormActions()
     {
         return getFormActions;
     }
+    public void increaseFormActions() {
+        getFormActions++;
+    }
 
     public int getCatalogsActions()
     {
         return getCatalogsActions;
+    }
+    public void increaseCatalogsActions() {
+        getCatalogsActions++;
     }
 
     public double getMax()
@@ -155,6 +157,9 @@ public class ActionDoneParser
     {
         return searchActions;
     }
+    public void increaseSearchActions(){
+        searchActions++;
+    }
 
     public double getStddev()
     {
@@ -166,58 +171,8 @@ public class ActionDoneParser
         return times;
     }
 
-    public boolean isNan()
+    public boolean isNaN()
     {
-        return nan;
-    }
-
-    public void parseLine(String line)
-    {
-        Matcher matcher = doneRegEx.matcher(line);
-
-        if (matcher.find())
-        {
-            String actionInLowerCase = matcher.group(2).toLowerCase();
-            if (EXCLUDED_ACTIONS.contains(actionInLowerCase))
-            {
-                return;
-            }
-
-            times.add(Integer.parseInt(matcher.group(1)));
-            if (actionInLowerCase.equals("addobjectaction"))
-            {
-                addObjectActions++;
-            }
-            else if (actionInLowerCase.equals("editobjectaction"))
-            {
-                editObjectsActions++;
-            }
-            else if (actionInLowerCase.matches("(?i)[a-zA-Z]+comment[a-zA-Z]+"))
-            {
-                commentActions++;
-            }
-            else if (!actionInLowerCase.contains("advlist")
-                    && actionInLowerCase.matches("(?i)^([a-zA-Z]+|Get)[a-zA-Z]+List[a-zA-Z]+"))
-
-            {
-                getListActions++;
-            }
-            else if (actionInLowerCase.matches("(?i)^([a-zA-Z]+|Get)[a-zA-Z]+Form[a-zA-Z]+"))
-            {
-                getFormActions++;
-            }
-            else if (actionInLowerCase.matches("(?i)^([a-zA-Z]+|Get)[a-zA-Z]+DtObject[a-zA-Z]+"))
-            {
-                getDtObjectActions++;
-            }
-            else if (actionInLowerCase.matches("(?i)[a-zA-Z]+search[a-zA-Z]+"))
-            {
-                searchActions++;
-            }
-            else if (actionInLowerCase.equals("getcatalogsaction"))
-            {
-                getCatalogsActions++;
-            }
-        }
+        return isNaN;
     }
 }
