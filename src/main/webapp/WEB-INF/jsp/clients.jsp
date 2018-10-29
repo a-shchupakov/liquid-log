@@ -48,43 +48,47 @@
 	</div>
 	<br>
     <div>
-        <form action="/parse" method="post">
-            <div>
+        <form action="/parse" method="post" enctype="multipart/form-data">
+            <div class="form-group">
                 <label>Influx DB name
-                    <input type="text" name="dbName" placeholder="DataBase name" required>
+                    <input class="form-control" type="text" name="dbName" placeholder="DataBase name" required>
                 </label>
             </div>
-            <div>Parse mode<br>
-                <label>Sdng
-                    <input type="radio" name="parseMode" value="sdng" checked>
+            <div class="form-check">Parse mode<br>
+                <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="parseMode" value="sdng" checked>
+                    Sdng
                 </label>
             </div>
-            <div>
-                <label>Gc
-                    <input type="radio" name="parseMode" value="gc">
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="parseMode" value="gc">
+                    Gc
                 </label>
             </div>
-            <div>
-                <label>Top
-                    <input type="radio" name="parseMode" value="top">
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="radio" name="parseMode" value="top">
+                    Top
                 </label>
             </div>
-            <div>
+            <div class="form-group">
                 <label>Log file
-                    <input type="text" name="logPath" value="D:\IT\Java-naumen\sdng.log.2017-09-07" required>
+                    <input class="form-control" type="text" name="logPath" value="D:\IT\Java-naumen\sdng.log.2017-09-07" required>
                 </label>
             </div>
-            <div>
+            <div class="form-group">
                 <label>Timezone
-                    <input type="text" name="timezone">
+                    <input class="form-control" type="text" name="timezone">
                 </label>
             </div>
-            <div>
-                <label>Trace result
-                    <input type="checkbox" name="traceResult" value="true">
+            <div class="form-check">
+                <label class="form-check-label">
+                    <input class="form-check-input" type="checkbox" name="traceResult" value="true">
+                    Trace result
                 </label>
             </div>
-            <div><input class="btn" type="submit" value="Parse"></div>
+            <div><input class="btn btn-primary" type="submit" value="Parse"></div>
         </form>
     </div>
     <h1>Client list</h1>
