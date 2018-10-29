@@ -1,6 +1,7 @@
 package ru.naumen.sd40.log.parser;
 
 import org.springframework.context.annotation.Bean;
+import ru.naumen.perfhouse.influx.InfluxDAO;
 import ru.naumen.sd40.log.parser.parsers.ParsingUtils;
 import ru.naumen.sd40.log.parser.parsers.data.*;
 import ru.naumen.sd40.log.parser.parsers.time.GCTimeParser;
@@ -29,14 +30,14 @@ public class LogParser
      * @throws ParseException
      */
     public void parseLogs(String log, String parseMode, String dbName, String timeZone,
-                          String host, String user, String pass) throws IOException, ParseException
+                          InfluxDAO influxDAO) throws IOException, ParseException
     {
         ITimeParser timeParser = buildTimeParser(log, parseMode);
         IDataParser dataParser = buildDataParser(parseMode);
 
         configureTimeZone(timeZone, timeParser);
 
-        try (InfluxDAOWorker influxDAOWorker = buildDaoWorker(dbName,host, user, pass)) {
+        try (InfluxDAOWorker influxDAOWorker = buildDaoWorker(dbName, influxDAO)) {
             parseEntries(log, timeParser, dataParser, influxDAOWorker);
         }
 
@@ -45,11 +46,11 @@ public class LogParser
             System.out.print("Timestamp;Actions;Min;Mean;Stddev;50%%;95%%;99%%;99.9%%;Max;Errors\n");
         }
     }
-    private InfluxDAOWorker buildDaoWorker(String dbName, String host, String user, String pass) {
+    private InfluxDAOWorker buildDaoWorker(String dbName, InfluxDAO influxDAO) {
         InfluxDAOWorker influxDAOWorker = null;
         if (dbName != null) {
-            influxDAOWorker = new InfluxDAOWorker(dbName, host, user, pass);
-            influxDAOWorker.init();
+            influxDAOWorker = new InfluxDAOWorker(influxDAO);
+            influxDAOWorker.init(dbName);
         }
         return influxDAOWorker;
     }

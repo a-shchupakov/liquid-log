@@ -12,17 +12,12 @@ public class InfluxDAOWorker implements Closeable {
     private long currentKey = -1;
     private DataSet currentDataSet;
 
-    public InfluxDAOWorker(String dbName, String host, String user, String pass) {
-        influxDb = dbName.replaceAll("-", "_");
-        influxStorage = new InfluxDAO(host, user, pass);
-    }
-
-    public InfluxDAOWorker(IDataBase dataBase, String dbName) {
+    public InfluxDAOWorker(IDataBase dataBase) {
         influxStorage = dataBase;
-        this.influxDb = dbName;
     }
 
-    public void init() {
+    public void init(String dbName) {
+        influxDb = dbName.replaceAll("-", "_");
         influxStorage.init();
         influxStorage.connectToDB(influxDb);
     }

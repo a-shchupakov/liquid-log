@@ -17,8 +17,8 @@ public class InfluxDAOWorkerTests extends Assert {
     }
 
     private InfluxDAOWorker getDaoWorker() {
-        InfluxDAOWorker worker = new InfluxDAOWorker(dataBase, "testDataBase");
-        worker.init();
+        InfluxDAOWorker worker = new InfluxDAOWorker(dataBase);
+        worker.init("testDataBase");
         return worker;
     }
     @Test
