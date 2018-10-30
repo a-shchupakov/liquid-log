@@ -4,7 +4,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
-import ru.naumen.sd40.log.parser.LogParser;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -18,16 +17,9 @@ public class PerfhouseApplication extends SpringBootServletInitializer
     }
 
 
-    public static void main(String[] args) throws IOException, ParseException
+    public static void main(String[] args)
     {
-        if (System.getProperty("Parser") != null)
-        {
-            //LogParser.parseLogs(args);
-        }
-        else
-        {
-            SpringApplication.run(PerfhouseApplication.class, args);
-        }
+        SpringApplication.run(PerfhouseApplication.class, args);
     }
 
 }
