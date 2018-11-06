@@ -25,8 +25,6 @@ public class LogParser
 {
     private Map<String, IDataParser> dataParsers;
 
-    public LogParser() { }
-
     @Autowired
     public LogParser(Map<String, IDataParser> dataParsers) {
         this.dataParsers = dataParsers;

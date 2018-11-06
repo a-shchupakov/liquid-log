@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 @Component("top")
 public class TopDataParser implements IDataParser  {
     private static final Pattern laPattern = Pattern.compile(".*load average:(.*)");
-    private Pattern cpuAndMemPattern = Pattern
+    private static final Pattern cpuAndMemPattern = Pattern
             .compile("^ *\\d+ \\S+ +\\S+ +\\S+ +\\S+ +\\S+ +\\S+ +\\S+ \\S+ +(\\S+) +(\\S+) +\\S+ java");
     @Override
     public void parseLine(String line, DataSet dataSet) {

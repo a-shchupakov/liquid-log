@@ -12,7 +12,7 @@ public class TopTimeParser implements ITimeParser {private SimpleDateFormat sdf 
     private String dataDate;
     private long currentTime = 0;
 
-    private Pattern timeRegex = Pattern.compile("^_+ (\\S+)");
+    private static final Pattern timeRegex = Pattern.compile("^_+ (\\S+)");
 
     public TopTimeParser(String file) throws IllegalArgumentException
     {
