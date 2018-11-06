@@ -5,9 +5,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.web.support.SpringBootServletInitializer;
 
-import java.io.IOException;
-import java.text.ParseException;
-
 @SpringBootApplication(scanBasePackages = { "ru.naumen" })
 public class PerfhouseApplication extends SpringBootServletInitializer
 {
