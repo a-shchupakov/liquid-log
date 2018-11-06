@@ -4,10 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.naumen.perfhouse.influx.InfluxDAO;
 import ru.naumen.sd40.log.parser.parsers.ParsingUtils;
-import ru.naumen.sd40.log.parser.parsers.data.GCDataParser;
 import ru.naumen.sd40.log.parser.parsers.data.IDataParser;
-import ru.naumen.sd40.log.parser.parsers.data.SdngDataParser;
-import ru.naumen.sd40.log.parser.parsers.data.TopDataParser;
 import ru.naumen.sd40.log.parser.parsers.time.GCTimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.SdngTimeParser;
@@ -18,6 +15,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Map;
 
 /**
  * Created by doki on 22.10.16.
@@ -25,17 +23,13 @@ import java.text.ParseException;
 @Component
 public class LogParser
 {
-    private SdngDataParser sdngDataParser;
-    private GCDataParser gcDataParser;
-    private TopDataParser topDataParser;
+    private Map<String, IDataParser> dataParsers;
 
     public LogParser() { }
 
     @Autowired
-    public LogParser(SdngDataParser sdng, GCDataParser gc, TopDataParser top) {
-        this.sdngDataParser = sdng;
-        this.gcDataParser = gc;
-        this.topDataParser = top;
+    public LogParser(Map<String, IDataParser> dataParsers) {
+        this.dataParsers = dataParsers;
     }
 
     /**
@@ -112,17 +106,12 @@ public class LogParser
     }
 
     private IDataParser buildDataParser(String parseMode) {
-        switch (parseMode)
-        {
-            case "sdng":
-                return sdngDataParser;
-            case "gc":
-                return gcDataParser;
-            case "top":
-                return topDataParser;
-            default:
-                throw new IllegalArgumentException(
-                        "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
+        IDataParser dataParser = dataParsers.get(parseMode);
+        if (dataParser == null) {
+            throw new IllegalArgumentException(
+                    "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
         }
+
+        return dataParser;
     }
 }

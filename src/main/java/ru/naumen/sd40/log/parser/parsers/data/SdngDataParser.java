@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component
+@Component("sdng")
 public class SdngDataParser implements IDataParser {
     private static Pattern doneRegEx = Pattern.compile("Done\\((\\d+)\\): ?(.*?Action)");
     private static Set<String> EXCLUDED_ACTIONS = new HashSet<>();
