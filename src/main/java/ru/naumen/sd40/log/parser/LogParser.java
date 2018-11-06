@@ -1,64 +1,76 @@
 package ru.naumen.sd40.log.parser;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import ru.naumen.perfhouse.influx.InfluxDAO;
 import ru.naumen.sd40.log.parser.parsers.ParsingUtils;
-import ru.naumen.sd40.log.parser.parsers.data.*;
+import ru.naumen.sd40.log.parser.parsers.data.IDataParser;
 import ru.naumen.sd40.log.parser.parsers.time.GCTimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.SdngTimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.TopTimeParser;
+import ru.naumen.sd40.log.parser.storages.DataSet;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.text.ParseException;
+import java.util.Map;
 
 /**
  * Created by doki on 22.10.16.
  */
+@Component
 public class LogParser
 {
+    private Map<String, IDataParser> dataParsers;
+    private boolean traceResult;
+
+    @Autowired
+    public LogParser(Map<String, IDataParser> dataParsers) {
+        this.dataParsers = dataParsers;
+    }
+
     /**
-     * 
-     * @param args [0] - sdng.log, [1] - gc.log, [2] - top, [3] - dbName, [4] timezone
+     *
      * @throws IOException
      * @throws ParseException
      */
-    public static void main(String[] args) throws IOException, ParseException
+    public void parseLogs(String log, String parseMode, String dbName, String timeZone, boolean trace,
+                          InfluxDAO influxDAO) throws IOException, ParseException
     {
-        String log = args[0];
-        String mode = System.getProperty("parse.mode", "");
+        this.traceResult = trace;
+        ITimeParser timeParser = buildTimeParser(log, parseMode);
+        IDataParser dataParser = buildDataParser(parseMode);
 
-        ITimeParser timeParser = buildTimeParser(log, mode);
-        IDataParser dataParser = buildDataParser(mode);
+        configureTimeZone(timeZone, timeParser);
 
-        configureTimeZone(args, timeParser);
-
-        try (InfluxDAOWorker influxDAOWorker = buildDaoWorker(args)) {
-            parseEntries(log, timeParser, dataParser, influxDAOWorker);
-        }
-
-        if (System.getProperty("NoCsv") == null)
+        if (this.traceResult)
         {
             System.out.print("Timestamp;Actions;Min;Mean;Stddev;50%%;95%%;99%%;99.9%%;Max;Errors\n");
         }
+
+        try (InfluxDAOWorker influxDAOWorker = buildDaoWorker(dbName, influxDAO)) {
+            parseEntries(log, timeParser, dataParser, influxDAOWorker);
+        }
     }
-    private static InfluxDAOWorker buildDaoWorker(String[] args) {
+    private InfluxDAOWorker buildDaoWorker(String dbName, InfluxDAO influxDAO) {
         InfluxDAOWorker influxDAOWorker = null;
-        if (args.length > 1) {
-            influxDAOWorker = new InfluxDAOWorker(args[1]);
-            influxDAOWorker.init();
+        if (dbName != null) {
+            influxDAOWorker = new InfluxDAOWorker(influxDAO, traceResult);
+            influxDAOWorker.init(dbName);
         }
         return influxDAOWorker;
     }
 
-    private static void configureTimeZone(String[] args, ITimeParser parser) {
-        if (args.length > 2)
+    private void configureTimeZone(String timeZone, ITimeParser parser) {
+        if (timeZone != null)
         {
-            parser.configureTimeZone(args[2]);
+            parser.configureTimeZone(timeZone);
         }
     }
 
-    private static void parseEntries(String log, ITimeParser timeParser, IDataParser dataParser,
+    private void parseEntries(String log, ITimeParser timeParser, IDataParser dataParser,
                                      InfluxDAOWorker influxDAOWorker) throws IOException, ParseException
     {
         try (BufferedReader br = new BufferedReader(new FileReader(log)))
@@ -78,7 +90,7 @@ public class LogParser
         }
     }
 
-    private static ITimeParser buildTimeParser(String log, String parseMode) {
+    private ITimeParser buildTimeParser(String log, String parseMode) {
         switch (parseMode)
         {
             case "sdng":
@@ -93,18 +105,13 @@ public class LogParser
         }
     }
 
-    private static IDataParser buildDataParser(String parseMode) {
-        switch (parseMode)
-        {
-            case "sdng":
-                return new SdngDataParser();
-            case "gc":
-                return new GCDataParser();
-            case "top":
-                return new TopDataParser();
-            default:
-                throw new IllegalArgumentException(
-                        "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
+    private IDataParser buildDataParser(String parseMode) {
+        IDataParser dataParser = dataParsers.get(parseMode);
+        if (dataParser == null) {
+            throw new IllegalArgumentException(
+                    "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
         }
+
+        return dataParser;
     }
 }

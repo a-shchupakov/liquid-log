@@ -1,6 +1,6 @@
 package ru.naumen.perfhouse.influx;
 
-import ru.naumen.sd40.log.parser.parsers.data.DataSet;
+import ru.naumen.sd40.log.parser.storages.DataSet;
 
 import java.util.HashMap;
 
@@ -17,7 +17,7 @@ public class DBMock implements IDataBase {
     }
 
     @Override
-    public void storeData(String dbName, long date, DataSet dataSet) {
+    public void storeData(String dbName, long date, DataSet dataSet, boolean traceResult) {
         if (this.dbName.equals(dbName)) {
             entries.put(date, dataSet);
         }

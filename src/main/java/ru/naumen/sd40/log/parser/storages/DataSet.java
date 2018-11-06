@@ -1,9 +1,4 @@
-package ru.naumen.sd40.log.parser.parsers.data;
-
-import ru.naumen.sd40.log.parser.storages.ActionDataStorage;
-import ru.naumen.sd40.log.parser.storages.ErrorDataStorage;
-import ru.naumen.sd40.log.parser.storages.GcDataStorage;
-import ru.naumen.sd40.log.parser.storages.TopDataStorage;
+package ru.naumen.sd40.log.parser.storages;
 
 /**
  * Created by doki on 22.10.16.

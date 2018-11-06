@@ -1,6 +1,8 @@
 package ru.naumen.sd40.log.parser.parsers.data;
 
+import org.springframework.stereotype.Component;
 import ru.naumen.sd40.log.parser.storages.ActionDataStorage;
+import ru.naumen.sd40.log.parser.storages.DataSet;
 import ru.naumen.sd40.log.parser.storages.ErrorDataStorage;
 
 import java.util.HashSet;
@@ -8,17 +10,18 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Component("sdng")
 public class SdngDataParser implements IDataParser {
-    private static Pattern doneRegEx = Pattern.compile("Done\\((\\d+)\\): ?(.*?Action)");
-    private static Set<String> EXCLUDED_ACTIONS = new HashSet<>();
+    private static final Pattern doneRegEx = Pattern.compile("Done\\((\\d+)\\): ?(.*?Action)");
+    private static final Set<String> EXCLUDED_ACTIONS = new HashSet<>();
     static
     {
         EXCLUDED_ACTIONS.add("EventAction".toLowerCase());
     }
 
-    private static Pattern warnRegEx = Pattern.compile("^\\d+ \\[.+?\\] \\(.+?\\) WARN");
-    private static Pattern errorRegEx = Pattern.compile("^\\d+ \\[.+?\\] \\(.+?\\) ERROR");
-    private static Pattern fatalRegEx = Pattern.compile("^\\d+ \\[.+?\\] \\(.+?\\) FATAL");
+    private static final Pattern warnRegEx = Pattern.compile("^\\d+ \\[.+?\\] \\(.+?\\) WARN");
+    private static final Pattern errorRegEx = Pattern.compile("^\\d+ \\[.+?\\] \\(.+?\\) ERROR");
+    private static final Pattern fatalRegEx = Pattern.compile("^\\d+ \\[.+?\\] \\(.+?\\) FATAL");
 
     @Override
     public void parseLine(String line, DataSet dataSet) {

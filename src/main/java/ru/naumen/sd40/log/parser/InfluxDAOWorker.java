@@ -1,29 +1,28 @@
 package ru.naumen.sd40.log.parser;
 
 import ru.naumen.perfhouse.influx.IDataBase;
-import ru.naumen.perfhouse.influx.InfluxDAO;
-import ru.naumen.sd40.log.parser.parsers.data.DataSet;
+import ru.naumen.sd40.log.parser.storages.DataSet;
 
 import java.io.Closeable;
 
 public class InfluxDAOWorker implements Closeable {
     private String influxDb;
     private IDataBase influxStorage;
-    private long currentKey;
+    private long currentKey = -1;
     private DataSet currentDataSet;
+    private boolean traceResult = false;
 
-    public InfluxDAOWorker(String dbName) {
-        influxDb = dbName.replaceAll("-", "_");
-        influxStorage = new InfluxDAO(System.getProperty("influx.host"), System.getProperty("influx.user"),
-                System.getProperty("influx.password"));
-    }
-
-    public InfluxDAOWorker(IDataBase dataBase, String dbName) {
+    public InfluxDAOWorker(IDataBase dataBase, boolean traceResult) {
         influxStorage = dataBase;
-        this.influxDb = dbName;
+        this.traceResult = traceResult;
     }
 
-    public void init() {
+    public InfluxDAOWorker(IDataBase dataBase) {
+        influxStorage = dataBase;
+    }
+
+    public void init(String dbName) {
+        influxDb = dbName.replaceAll("-", "_");
         influxStorage.init();
         influxStorage.connectToDB(influxDb);
     }
@@ -48,6 +47,6 @@ public class InfluxDAOWorker implements Closeable {
     }
 
     private void saveToDB() {
-        influxStorage.storeData(influxDb, currentKey, currentDataSet);
+        influxStorage.storeData(influxDb, currentKey, currentDataSet, traceResult);
     }
 }

@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.naumen.perfhouse.statdata.Constants;
-import ru.naumen.sd40.log.parser.parsers.data.DataSet;
 import ru.naumen.sd40.log.parser.storages.*;
 
 import javax.annotation.PostConstruct;
@@ -159,13 +158,22 @@ public class InfluxDAO implements IDataBase
                     .addField(MAX_MEM, dataStorage.getMaxMem());
     }
 
-    public void storeData(String dbName, long date, DataSet dataSet) {
+    public void storeData(String dbName, long date, DataSet dataSet, boolean traceResult) {
         Builder builder = Point.measurement(Constants.MEASUREMENT_NAME).time(date, TimeUnit.MILLISECONDS);
 
-        ActionDataStorage actionDataStorage = dataSet.getActionsData();
-        actionDataStorage.calculate();
-        if (!actionDataStorage.isNaN())
-            builder = addSdngFields(builder, actionDataStorage, dataSet.getErrorData());
+        ActionDataStorage actionData = dataSet.getActionsData();
+        ErrorDataStorage errorData = dataSet.getErrorData();
+        actionData.calculate();
+
+        if (traceResult) {
+            System.out.print(String.format("%d;%d;%f;%f;%f;%f;%f;%f;%f;%f;%d\n", date, actionData.getCount(),
+                    actionData.getMin(), actionData.getMean(), actionData.getStddev(), actionData.getPercent50(),
+                    actionData.getPercent95(), actionData.getPercent99(), actionData.getPercent999(),
+                    actionData.getMax(), errorData.getErrorCount()));
+        }
+
+        if (!actionData.isNaN())
+            builder = addSdngFields(builder, actionData, errorData);
         else if (!dataSet.getGcData().isNaN())
             builder = addGcFields(builder, dataSet.getGcData());
         else if (!dataSet.getCpuData().isNaN())

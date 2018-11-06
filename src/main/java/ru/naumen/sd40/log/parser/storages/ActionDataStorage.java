@@ -6,17 +6,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ActionDataStorage implements IDataStorage {
-    ArrayList<Integer> times = new ArrayList<>();
-    double min;
-    double mean;
-    double stddev;
-    double percent50;
-    double percent95;
-    double percent99;
+    private ArrayList<Integer> times = new ArrayList<>();
+    private double min;
+    private double mean;
+    private double stddev;
+    private double percent50;
+    private double percent95;
+    private double percent99;
 
-    double percent999;
-    double max;
-    long count;
+    private double percent999;
+    private double max;
+    private long count;
     private int addObjectActions = 0;
     private int editObjectsActions = 0;
     private int getListActions = 0;
@@ -29,14 +29,14 @@ public class ActionDataStorage implements IDataStorage {
 
     private int searchActions = 0;
 
-    boolean isNaN = true;
+    private boolean isNaN = true;
 
     private HashMap<String, Integer> actions = new HashMap<>();
 
     public void calculate()
     {
         DescriptiveStatistics ds = new DescriptiveStatistics();
-        times.forEach(t -> ds.addValue(t));
+        times.forEach(ds::addValue);
         min = ds.getMin();
         mean = ds.getMean();
         stddev = ds.getStandardDeviation();
