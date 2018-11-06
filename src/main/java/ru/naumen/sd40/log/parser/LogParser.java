@@ -36,13 +36,13 @@ public class LogParser
 
         configureTimeZone(timeZone, timeParser);
 
-        try (InfluxDAOWorker influxDAOWorker = buildDaoWorker(dbName, influxDAO)) {
-            parseEntries(log, timeParser, dataParser, influxDAOWorker);
-        }
-
         if (this.traceResult)
         {
             System.out.print("Timestamp;Actions;Min;Mean;Stddev;50%%;95%%;99%%;99.9%%;Max;Errors\n");
+        }
+
+        try (InfluxDAOWorker influxDAOWorker = buildDaoWorker(dbName, influxDAO)) {
+            parseEntries(log, timeParser, dataParser, influxDAOWorker);
         }
     }
     private InfluxDAOWorker buildDaoWorker(String dbName, InfluxDAO influxDAO) {
