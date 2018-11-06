@@ -1,6 +1,6 @@
 package ru.naumen.sd40.log.parser;
 
-import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 import ru.naumen.perfhouse.influx.InfluxDAO;
 import ru.naumen.sd40.log.parser.parsers.ParsingUtils;
 import ru.naumen.sd40.log.parser.parsers.data.GCDataParser;
@@ -21,19 +21,17 @@ import java.text.ParseException;
 /**
  * Created by doki on 22.10.16.
  */
+@Component
 public class LogParser
 {
-    @Bean
-    public LogParser logParser() {
-        return new LogParser();
-    }
+    private boolean traceResult;
 
     /**
      *
      * @throws IOException
      * @throws ParseException
      */
-    public void parseLogs(String log, String parseMode, String dbName, String timeZone,
+    public void parseLogs(String log, String parseMode, String dbName, String timeZone, boolean trace,
                           InfluxDAO influxDAO) throws IOException, ParseException
     {
         ITimeParser timeParser = buildTimeParser(log, parseMode);
@@ -41,19 +39,19 @@ public class LogParser
 
         configureTimeZone(timeZone, timeParser);
 
-        try (InfluxDAOWorker influxDAOWorker = buildDaoWorker(dbName, influxDAO)) {
-            parseEntries(log, timeParser, dataParser, influxDAOWorker);
-        }
-
-        if (System.getProperty("NoCsv") == null)
+        if (traceResult)
         {
             System.out.print("Timestamp;Actions;Min;Mean;Stddev;50%%;95%%;99%%;99.9%%;Max;Errors\n");
+        }
+
+        try (InfluxDAOWorker influxDAOWorker = buildDaoWorker(dbName, influxDAO)) {
+            parseEntries(log, timeParser, dataParser, influxDAOWorker);
         }
     }
     private InfluxDAOWorker buildDaoWorker(String dbName, InfluxDAO influxDAO) {
         InfluxDAOWorker influxDAOWorker = null;
         if (dbName != null) {
-            influxDAOWorker = new InfluxDAOWorker(influxDAO);
+            influxDAOWorker = new InfluxDAOWorker(influxDAO, this.traceResult);
             influxDAOWorker.init(dbName);
         }
         return influxDAOWorker;
