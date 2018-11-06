@@ -1,7 +1,7 @@
 package ru.naumen.sd40.log.parser.parsers.data;
 
+import ru.naumen.sd40.log.parser.storages.DataSet;
 import ru.naumen.sd40.log.parser.storages.GcDataStorage;
-import ru.naumen.sd40.log.parser.storages.IDataStorage;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

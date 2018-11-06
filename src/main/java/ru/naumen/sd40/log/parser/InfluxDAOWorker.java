@@ -1,8 +1,7 @@
 package ru.naumen.sd40.log.parser;
 
 import ru.naumen.perfhouse.influx.IDataBase;
-import ru.naumen.perfhouse.influx.InfluxDAO;
-import ru.naumen.sd40.log.parser.parsers.data.DataSet;
+import ru.naumen.sd40.log.parser.storages.DataSet;
 
 import java.io.Closeable;
 

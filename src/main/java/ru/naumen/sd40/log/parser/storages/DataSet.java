@@ -1,4 +1,4 @@
-package ru.naumen.sd40.log.parser.parsers.data;
+package ru.naumen.sd40.log.parser.storages;
 
 import ru.naumen.sd40.log.parser.storages.ActionDataStorage;
 import ru.naumen.sd40.log.parser.storages.ErrorDataStorage;

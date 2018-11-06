@@ -1,6 +1,7 @@
 package ru.naumen.sd40.log.parser.parsers.data;
 
 import ru.naumen.sd40.log.parser.storages.ActionDataStorage;
+import ru.naumen.sd40.log.parser.storages.DataSet;
 import ru.naumen.sd40.log.parser.storages.ErrorDataStorage;
 
 import java.util.HashSet;
