@@ -10,6 +10,12 @@ public class InfluxDAOWorker implements Closeable {
     private IDataBase influxStorage;
     private long currentKey = -1;
     private DataSet currentDataSet;
+    private boolean traceResult = false;
+
+    public InfluxDAOWorker(IDataBase dataBase, boolean traceResult) {
+        influxStorage = dataBase;
+        this.traceResult = traceResult;
+    }
 
     public InfluxDAOWorker(IDataBase dataBase) {
         influxStorage = dataBase;
@@ -41,6 +47,6 @@ public class InfluxDAOWorker implements Closeable {
     }
 
     private void saveToDB() {
-        influxStorage.storeData(influxDb, currentKey, currentDataSet);
+        influxStorage.storeData(influxDb, currentKey, currentDataSet, traceResult);
     }
 }
