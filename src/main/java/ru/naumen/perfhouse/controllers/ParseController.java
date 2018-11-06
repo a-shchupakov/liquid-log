@@ -16,21 +16,22 @@ import java.text.ParseException;
 @Controller
 public class ParseController {
     private InfluxDAO influxDAO;
+    private LogParser logParser;
 
     @Inject
-    public ParseController(InfluxDAO influxDAO)
+    public ParseController(InfluxDAO influxDAO, LogParser logParser)
     {
         this.influxDAO = influxDAO;
+        this.logParser = logParser;
     }
 
     @RequestMapping(path = "/parse", method = RequestMethod.POST)
     @ResponseStatus(value = HttpStatus.OK)
-    public void parseLogs(LogParser logParser,
-                            @RequestParam("dbName") String dbName,
-                            @RequestParam("parseMode") String parseMode,
-                            @RequestParam("logPath") String logPath,
-                            @RequestParam(name = "timezone", required = false) String timezone,
-                            @RequestParam(name = "traceResult", required = false) String traceResult) {
+    public void parseLogs(@RequestParam("dbName") String dbName,
+                          @RequestParam("parseMode") String parseMode,
+                          @RequestParam("logPath") String logPath,
+                          @RequestParam(name = "timezone", required = false) String timezone,
+                          @RequestParam(name = "traceResult", required = false) String traceResult) {
         boolean trace = traceResult != null;
 
         try {

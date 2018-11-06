@@ -1,6 +1,7 @@
 package ru.naumen.sd40.log.parser;
 
-import org.springframework.context.annotation.Bean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import ru.naumen.perfhouse.influx.InfluxDAO;
 import ru.naumen.sd40.log.parser.parsers.ParsingUtils;
 import ru.naumen.sd40.log.parser.parsers.data.GCDataParser;
@@ -21,11 +22,20 @@ import java.text.ParseException;
 /**
  * Created by doki on 22.10.16.
  */
+@Component
 public class LogParser
 {
-    @Bean
-    public LogParser logParser() {
-        return new LogParser();
+    private SdngDataParser sdngDataParser;
+    private GCDataParser gcDataParser;
+    private TopDataParser topDataParser;
+
+    public LogParser() { }
+
+    @Autowired
+    public LogParser(SdngDataParser sdng, GCDataParser gc, TopDataParser top) {
+        this.sdngDataParser = sdng;
+        this.gcDataParser = gc;
+        this.topDataParser = top;
     }
 
     /**
@@ -105,11 +115,11 @@ public class LogParser
         switch (parseMode)
         {
             case "sdng":
-                return new SdngDataParser();
+                return sdngDataParser;
             case "gc":
-                return new GCDataParser();
+                return gcDataParser;
             case "top":
-                return new TopDataParser();
+                return topDataParser;
             default:
                 throw new IllegalArgumentException(
                         "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
