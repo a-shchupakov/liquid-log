@@ -17,7 +17,7 @@ public class DBMock implements IDataBase {
     }
 
     @Override
-    public void storeData(String dbName, long date, DataSet dataSet) {
+    public void storeData(String dbName, long date, DataSet dataSet, boolean traceResult) {
         if (this.dbName.equals(dbName)) {
             entries.put(date, dataSet);
         }

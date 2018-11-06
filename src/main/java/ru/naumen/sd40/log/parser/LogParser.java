@@ -1,6 +1,6 @@
 package ru.naumen.sd40.log.parser;
 
-import org.springframework.context.annotation.Bean;
+import org.springframework.stereotype.Component;
 import ru.naumen.perfhouse.influx.InfluxDAO;
 import ru.naumen.sd40.log.parser.parsers.ParsingUtils;
 import ru.naumen.sd40.log.parser.parsers.data.*;
@@ -17,21 +17,20 @@ import java.text.ParseException;
 /**
  * Created by doki on 22.10.16.
  */
+@Component
 public class LogParser
 {
-    @Bean
-    public LogParser logParser() {
-        return new LogParser();
-    }
+    private boolean traceResult;
 
     /**
      *
      * @throws IOException
      * @throws ParseException
      */
-    public void parseLogs(String log, String parseMode, String dbName, String timeZone,
+    public void parseLogs(String log, String parseMode, String dbName, String timeZone, boolean trace,
                           InfluxDAO influxDAO) throws IOException, ParseException
     {
+        this.traceResult = trace;
         ITimeParser timeParser = buildTimeParser(log, parseMode);
         IDataParser dataParser = buildDataParser(parseMode);
 
@@ -41,7 +40,7 @@ public class LogParser
             parseEntries(log, timeParser, dataParser, influxDAOWorker);
         }
 
-        if (System.getProperty("NoCsv") == null)
+        if (this.traceResult)
         {
             System.out.print("Timestamp;Actions;Min;Mean;Stddev;50%%;95%%;99%%;99.9%%;Max;Errors\n");
         }
@@ -49,7 +48,7 @@ public class LogParser
     private InfluxDAOWorker buildDaoWorker(String dbName, InfluxDAO influxDAO) {
         InfluxDAOWorker influxDAOWorker = null;
         if (dbName != null) {
-            influxDAOWorker = new InfluxDAOWorker(influxDAO);
+            influxDAOWorker = new InfluxDAOWorker(influxDAO, traceResult);
             influxDAOWorker.init(dbName);
         }
         return influxDAOWorker;

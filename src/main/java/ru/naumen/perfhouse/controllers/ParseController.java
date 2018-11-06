@@ -34,7 +34,7 @@ public class ParseController {
         boolean trace = traceResult != null;
 
         try {
-            logParser.parseLogs(logPath, parseMode, dbName, timezone, influxDAO);
+            logParser.parseLogs(logPath, parseMode, dbName, timezone, trace, influxDAO);
         } catch (IOException | ParseException e) {
 
         }
