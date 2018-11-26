@@ -1,11 +1,11 @@
 package ru.naumen.sd40.log.parser.storages.dataSets;
 
-import ru.naumen.sd40.log.parser.storages.GcDataStorage;
+import ru.naumen.sd40.log.parser.storages.GСDataStorage;
 
 public class GcDataSet implements IDataSet {
-    private GcDataStorage gcDataStorage = new GcDataStorage();
+    private GСDataStorage gcDataStorage = new GСDataStorage();
 
-    public GcDataStorage get() {
+    public GСDataStorage get() {
         return gcDataStorage;
     }
 }

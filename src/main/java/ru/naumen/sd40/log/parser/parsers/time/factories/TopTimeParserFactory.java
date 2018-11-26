@@ -9,7 +9,7 @@ import ru.naumen.sd40.log.parser.parsers.time.TopTimeParser;
 
 @Component("top" + "TimeParserFactory")
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class TopTimeParserFactory implements TimeFactory {
+public class TopTimeParserFactory implements TimeParserFactory {
     private TopTimeParser timeParser = new TopTimeParser();
 
     @Override

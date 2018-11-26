@@ -165,7 +165,7 @@ public class InfluxDAO implements IDataBase
     public void storeGc(String dbName, long date, GcDataSet dataSet, boolean traceResult) {
         Builder builder = Point.measurement(Constants.MEASUREMENT_NAME).time(date, TimeUnit.MILLISECONDS);
 
-        GcDataStorage dataStorage = dataSet.get();
+        GСDataStorage dataStorage = dataSet.get();
 
         if (dataStorage.isNaN())
             return;

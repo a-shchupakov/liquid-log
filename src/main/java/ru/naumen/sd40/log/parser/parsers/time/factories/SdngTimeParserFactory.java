@@ -9,7 +9,7 @@ import ru.naumen.sd40.log.parser.parsers.time.SdngTimeParser;
 
 @Component("sdng" + "TimeParserFactory")
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class SdngTimeParserFactory implements TimeFactory {
+public class SdngTimeParserFactory implements TimeParserFactory {
     private SdngTimeParser timeParser = new SdngTimeParser();
 
     @Override

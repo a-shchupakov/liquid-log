@@ -5,11 +5,9 @@ import org.springframework.stereotype.Component;
 import ru.naumen.perfhouse.influx.InfluxDAO;
 import ru.naumen.sd40.log.parser.parsers.ParsingUtils;
 import ru.naumen.sd40.log.parser.parsers.data.IDataParser;
-import ru.naumen.sd40.log.parser.parsers.time.GCTimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
-import ru.naumen.sd40.log.parser.parsers.time.SdngTimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.TopTimeParser;
-import ru.naumen.sd40.log.parser.parsers.time.factories.TimeFactory;
+import ru.naumen.sd40.log.parser.parsers.time.factories.TimeParserFactory;
 import ru.naumen.sd40.log.parser.storages.dataSets.IDataSet;
 import ru.naumen.sd40.log.parser.storages.dataSets.factories.DataSetFactory;
 
@@ -31,12 +29,12 @@ public class LogParser
 
     private Map<String, IDataParser> dataParsers;
     private Map<String, DataSetFactory> dataSetFactories;
-    private Map<String, TimeFactory> timeFactories;
+    private Map<String, TimeParserFactory> timeFactories;
 
     @Autowired
     public LogParser(Map<String, IDataParser> dataParsers,
                      Map<String, DataSetFactory> dataSetFactories,
-                     Map<String, TimeFactory> timeFactories) {
+                     Map<String, TimeParserFactory> timeFactories) {
         this.dataParsers = dataParsers;
         this.dataSetFactories = dataSetFactories;
         this.timeFactories = timeFactories;
@@ -96,14 +94,14 @@ public class LogParser
     }
 
     private ITimeParser buildTimeParser(String parseMode) {
-        TimeFactory timeFactory = timeFactories.get(parseMode + "TimeParserFactory");
+        TimeParserFactory timeParserFactory = timeFactories.get(parseMode + "TimeParserFactory");
 
-        if (timeFactory == null) {
+        if (timeParserFactory == null) {
             throw new IllegalArgumentException(
                     "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
         }
 
-        ITimeParser timeParser = timeFactory.create();
+        ITimeParser timeParser = timeParserFactory.create();
         prepareTimeParser(timeParser);
 
         return timeParser;
