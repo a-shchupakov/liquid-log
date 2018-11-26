@@ -12,10 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.naumen.perfhouse.statdata.Constants;
-import ru.naumen.sd40.log.parser.storages.*;
-import ru.naumen.sd40.log.parser.storages.dataSets.GcDataSet;
-import ru.naumen.sd40.log.parser.storages.dataSets.SdngDataSet;
-import ru.naumen.sd40.log.parser.storages.dataSets.TopDataSet;
+import ru.naumen.sd40.log.parser.dataSets.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -122,8 +119,8 @@ public class InfluxDAO implements IDataBase
     public void storeSdng(String dbName, long date, SdngDataSet dataSet, boolean traceResult) {
         Builder builder = Point.measurement(Constants.MEASUREMENT_NAME).time(date, TimeUnit.MILLISECONDS);
 
-        ActionDataStorage actionData = dataSet.getAction();
-        ErrorDataStorage errorData = dataSet.getError();
+        ActionDataSet actionData = dataSet.getAction();
+        ErrorDataSet errorData = dataSet.getError();
 
         actionData.calculate();
 
@@ -165,15 +162,13 @@ public class InfluxDAO implements IDataBase
     public void storeGc(String dbName, long date, GcDataSet dataSet, boolean traceResult) {
         Builder builder = Point.measurement(Constants.MEASUREMENT_NAME).time(date, TimeUnit.MILLISECONDS);
 
-        GСDataStorage dataStorage = dataSet.get();
-
-        if (dataStorage.isNaN())
+        if (dataSet.isNaN())
             return;
 
         builder
-            .addField(GCTIMES, dataStorage.getGcTimes())
-            .addField(AVARAGE_GC_TIME, dataStorage.getCalculatedAvg())
-            .addField(MAX_GC_TIME, dataStorage.getMaxGcTime());
+            .addField(GCTIMES, dataSet.getGcTimes())
+            .addField(AVARAGE_GC_TIME, dataSet.getCalculatedAvg())
+            .addField(MAX_GC_TIME, dataSet.getMaxGcTime());
 
         Point point = builder.build();
         writePoint(dbName, point);
@@ -183,18 +178,16 @@ public class InfluxDAO implements IDataBase
     public void storeTop(String dbName, long date, TopDataSet dataSet, boolean traceResult) {
         Builder builder = Point.measurement(Constants.MEASUREMENT_NAME).time(date, TimeUnit.MILLISECONDS);
 
-        TopDataStorage dataStorage = dataSet.get();
-
-        if (dataStorage.isNaN())
+        if (dataSet.isNaN())
             return;
 
         builder
-            .addField(AVG_LA, dataStorage.getAvgLa())
-            .addField(AVG_CPU, dataStorage.getAvgCpuUsage())
-            .addField(AVG_MEM, dataStorage.getAvgMemUsage())
-            .addField(MAX_LA, dataStorage.getMaxLa())
-            .addField(MAX_CPU, dataStorage.getMaxCpu())
-            .addField(MAX_MEM, dataStorage.getMaxMem());
+            .addField(AVG_LA, dataSet.getAvgLa())
+            .addField(AVG_CPU, dataSet.getAvgCpuUsage())
+            .addField(AVG_MEM, dataSet.getAvgMemUsage())
+            .addField(MAX_LA, dataSet.getMaxLa())
+            .addField(MAX_CPU, dataSet.getMaxCpu())
+            .addField(MAX_MEM, dataSet.getMaxMem());
 
         Point point = builder.build();
         writePoint(dbName, point);

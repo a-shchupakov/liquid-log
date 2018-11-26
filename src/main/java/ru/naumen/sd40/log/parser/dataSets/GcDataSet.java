@@ -1,11 +1,11 @@
-package ru.naumen.sd40.log.parser.storages;
+package ru.naumen.sd40.log.parser.dataSets;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 
 import static ru.naumen.sd40.log.parser.NumberUtils.getSafeDouble;
 import static ru.naumen.sd40.log.parser.NumberUtils.roundToTwoPlaces;
 
-public class GСDataStorage implements IDataStorage {
+public class GcDataSet implements IDataSet {
     private DescriptiveStatistics ds = new DescriptiveStatistics();
 
     public void addValue(double value){
@@ -31,5 +31,4 @@ public class GСDataStorage implements IDataStorage {
     {
         return getGcTimes() == 0;
     }
-
 }

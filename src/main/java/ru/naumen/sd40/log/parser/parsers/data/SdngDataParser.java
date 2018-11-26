@@ -1,9 +1,9 @@
 package ru.naumen.sd40.log.parser.parsers.data;
 
 import org.springframework.stereotype.Component;
-import ru.naumen.sd40.log.parser.storages.ActionDataStorage;
-import ru.naumen.sd40.log.parser.storages.ErrorDataStorage;
-import ru.naumen.sd40.log.parser.storages.dataSets.SdngDataSet;
+import ru.naumen.sd40.log.parser.dataSets.ActionDataSet;
+import ru.naumen.sd40.log.parser.dataSets.ErrorDataSet;
+import ru.naumen.sd40.log.parser.dataSets.SdngDataSet;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -29,7 +29,7 @@ public class SdngDataParser implements IDataParser<SdngDataSet> {
         parseErrorLine(line, dataSet.getError());
     }
 
-    private void parseActionLine(String line, ActionDataStorage dataStorage) {
+    private void parseActionLine(String line, ActionDataSet dataStorage) {
         Matcher matcher = doneRegEx.matcher(line);
 
         if (matcher.find()) {
@@ -60,7 +60,7 @@ public class SdngDataParser implements IDataParser<SdngDataSet> {
         }
     }
 
-    private void parseErrorLine(String line, ErrorDataStorage dataStorage) {
+    private void parseErrorLine(String line, ErrorDataSet dataStorage) {
         if (warnRegEx.matcher(line).find())
         {
             dataStorage.increaseWarnCount();
