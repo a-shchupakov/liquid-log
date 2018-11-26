@@ -59,7 +59,7 @@
                 <label>Parse mode<br>
                     <select class="form-control" name="parseMode">
                         <% for(String parseMode: (Set<String>)request.getAttribute("parseModes")) { %>
-                            <option><%= parseMode %></option>
+                            <option value="<%= parseMode %>"><%= parseMode %></option>
                         <% } %>
                     </select>
                 </label>
