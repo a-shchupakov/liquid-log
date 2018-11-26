@@ -3,6 +3,7 @@ package ru.naumen.sd40.log.parser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.naumen.perfhouse.influx.InfluxDAO;
+import ru.naumen.sd40.log.parser.parseMods.ParseMode;
 import ru.naumen.sd40.log.parser.parsers.ParsingUtils;
 import ru.naumen.sd40.log.parser.parsers.data.IDataParser;
 import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
@@ -26,19 +27,12 @@ public class LogParser
     private boolean traceResult;
     private String timeZone;
     private String log;
-    private String parseMode;
 
-    private Map<String, IDataParser> dataParsers;
-    private Map<String, DataSetFactory> dataSetFactories;
-    private Map<String, TimeParserFactory> timeFactories;
+    private Map<String, ParseMode> parseModes;
 
     @Autowired
-    public LogParser(Map<String, IDataParser> dataParsers,
-                     Map<String, DataSetFactory> dataSetFactories,
-                     Map<String, TimeParserFactory> timeFactories) {
-        this.dataParsers = dataParsers;
-        this.dataSetFactories = dataSetFactories;
-        this.timeFactories = timeFactories;
+    public LogParser(Map<String, ParseMode> parseModes) {
+        this.parseModes = parseModes;
     }
 
     /**
@@ -46,16 +40,18 @@ public class LogParser
      * @throws IOException
      * @throws ParseException
      */
-    public void parseLogs(String log, String parseMode, String dbName, String timeZone, boolean trace,
+    public void parseLogs(String log, String strParseMode, String dbName, String timeZone, boolean trace,
                           InfluxDAO influxDAO) throws IOException, ParseException
     {
         this.traceResult = trace;
         this.log = log;
         this.timeZone = timeZone;
-        this.parseMode = parseMode;
-        ITimeParser timeParser = buildTimeParser();
-        IDataParser dataParser = buildDataParser();
-        DataSetFactory dataSetFactory = getDataSetFactory();
+
+        ParseMode parseMode = getParseMode(strParseMode);
+
+        ITimeParser timeParser = parseMode.getTimeParser();
+        IDataParser dataParser = parseMode.getDataParser();
+        DataSetFactory dataSetFactory = parseMode.getDataSetFactory();
 
         if (this.traceResult)
         {
@@ -95,15 +91,17 @@ public class LogParser
         }
     }
 
-    private ITimeParser buildTimeParser() {
-        TimeParserFactory factory = timeFactories.get(this.parseMode + "TimeParserFactory");
+    private ParseMode getParseMode(String strParseMode) {
+        ParseMode parseMode = parseModes.get(strParseMode);
 
-        checkParseObject(factory);
+        if (parseMode == null) {
+            throw new IllegalArgumentException(
+                    "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + strParseMode);
+        }
 
-        ITimeParser timeParser = factory.create();
-        prepareTimeParser(timeParser);
+        prepareTimeParser(parseMode.getTimeParser());
 
-        return timeParser;
+        return parseMode;
     }
 
     // Можно вместо этого метода сделать Spring-аннотации After в фабриках TimeParser'ов
@@ -113,28 +111,5 @@ public class LogParser
 
         if (timeParser instanceof TopTimeParser)
             ((TopTimeParser) timeParser).associateFile(this.log);
-    }
-
-    private IDataParser buildDataParser() {
-        IDataParser dataParser = dataParsers.get(this.parseMode + "DataParser");
-
-        checkParseObject(dataParser);
-
-        return dataParser;
-    }
-
-    private DataSetFactory getDataSetFactory() {
-        DataSetFactory factory = dataSetFactories.get(parseMode + "DataSetFactory");
-
-        checkParseObject(factory);
-
-        return factory;
-    }
-
-    private void checkParseObject(Object parseObject) {
-        if (parseObject == null) {
-            throw new IllegalArgumentException(
-                    "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + this.parseMode);
-        }
     }
 }

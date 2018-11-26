@@ -7,7 +7,7 @@ import org.springframework.web.context.WebApplicationContext;
 import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.SdngTimeParser;
 
-@Component("sdng" + "TimeParserFactory")
+@Component
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class SdngTimeParserFactory implements TimeParserFactory {
     private SdngTimeParser timeParser = new SdngTimeParser();

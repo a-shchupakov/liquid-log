@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import ru.naumen.perfhouse.influx.InfluxDAO;
+import ru.naumen.sd40.log.parser.parseMods.ParseMode;
+import ru.naumen.sd40.log.parser.storages.dataSets.factories.DataSetFactory;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by dkirpichenkov on 26.10.16.
@@ -28,11 +31,13 @@ public class ClientsController
 {
     private Logger LOG = LoggerFactory.getLogger(ClientsController.class);
     private InfluxDAO influxDAO;
+    private Map<String, ParseMode> parseModes;
 
     @Inject
-    public ClientsController(InfluxDAO influxDAO)
+    public ClientsController(InfluxDAO influxDAO, Map<String, ParseMode> parseModes)
     {
         this.influxDAO = influxDAO;
+        this.parseModes = parseModes;
     }
 
     @RequestMapping(path = "/")
@@ -67,6 +72,7 @@ public class ClientsController
         model.put("last864links", clientLast864Links);
         model.put("last2016links", clientLast2016Links);
         model.put("prevMonthLinks", clientPreviousMonthLinks);
+        model.put("parseModes", parseModes.keySet());
 
         return new ModelAndView("clients", model, HttpStatus.OK);
     }
