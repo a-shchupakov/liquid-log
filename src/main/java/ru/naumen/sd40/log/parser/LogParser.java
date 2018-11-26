@@ -26,6 +26,7 @@ public class LogParser
     private boolean traceResult;
     private String timeZone;
     private String log;
+    private String parseMode;
 
     private Map<String, IDataParser> dataParsers;
     private Map<String, DataSetFactory> dataSetFactories;
@@ -51,9 +52,10 @@ public class LogParser
         this.traceResult = trace;
         this.log = log;
         this.timeZone = timeZone;
-        ITimeParser timeParser = buildTimeParser(parseMode);
-        IDataParser dataParser = buildDataParser(parseMode);
-        DataSetFactory dataSetFactory = getDataSetFactory(parseMode);
+        this.parseMode = parseMode;
+        ITimeParser timeParser = buildTimeParser();
+        IDataParser dataParser = buildDataParser();
+        DataSetFactory dataSetFactory = getDataSetFactory();
 
         if (this.traceResult)
         {
@@ -93,15 +95,12 @@ public class LogParser
         }
     }
 
-    private ITimeParser buildTimeParser(String parseMode) {
-        TimeParserFactory timeParserFactory = timeFactories.get(parseMode + "TimeParserFactory");
+    private ITimeParser buildTimeParser() {
+        TimeParserFactory factory = timeFactories.get(this.parseMode + "TimeParserFactory");
 
-        if (timeParserFactory == null) {
-            throw new IllegalArgumentException(
-                    "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
-        }
+        checkParseObject(factory);
 
-        ITimeParser timeParser = timeParserFactory.create();
+        ITimeParser timeParser = factory.create();
         prepareTimeParser(timeParser);
 
         return timeParser;
@@ -116,25 +115,26 @@ public class LogParser
             ((TopTimeParser) timeParser).associateFile(this.log);
     }
 
-    private IDataParser buildDataParser(String parseMode) {
-        IDataParser dataParser = dataParsers.get(parseMode + "DataParser");
+    private IDataParser buildDataParser() {
+        IDataParser dataParser = dataParsers.get(this.parseMode + "DataParser");
 
-        if (dataParser == null) {
-            throw new IllegalArgumentException(
-                    "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
-        }
+        checkParseObject(dataParser);
 
         return dataParser;
     }
 
-    private DataSetFactory getDataSetFactory(String parseMode) {
+    private DataSetFactory getDataSetFactory() {
         DataSetFactory factory = dataSetFactories.get(parseMode + "DataSetFactory");
 
-        if (factory == null) {
-            throw new IllegalArgumentException(
-                    "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
-        }
+        checkParseObject(factory);
 
         return factory;
+    }
+
+    private void checkParseObject(Object parseObject) {
+        if (parseObject == null) {
+            throw new IllegalArgumentException(
+                    "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + this.parseMode);
+        }
     }
 }
