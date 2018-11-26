@@ -9,6 +9,7 @@ import ru.naumen.sd40.log.parser.parsers.time.GCTimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.SdngTimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.TopTimeParser;
+import ru.naumen.sd40.log.parser.parsers.time.factories.TimeFactory;
 import ru.naumen.sd40.log.parser.storages.dataSets.IDataSet;
 import ru.naumen.sd40.log.parser.storages.dataSets.factories.DataSetFactory;
 
@@ -24,14 +25,21 @@ import java.util.Map;
 @Component
 public class LogParser
 {
+    private boolean traceResult;
+    private String timeZone;
+    private String log;
+
     private Map<String, IDataParser> dataParsers;
     private Map<String, DataSetFactory> dataSetFactories;
-    private boolean traceResult;
+    private Map<String, TimeFactory> timeFactories;
 
     @Autowired
-    public LogParser(Map<String, IDataParser> dataParsers, Map<String, DataSetFactory> dataSetFactories) {
+    public LogParser(Map<String, IDataParser> dataParsers,
+                     Map<String, DataSetFactory> dataSetFactories,
+                     Map<String, TimeFactory> timeFactories) {
         this.dataParsers = dataParsers;
         this.dataSetFactories = dataSetFactories;
+        this.timeFactories = timeFactories;
     }
 
     /**
@@ -43,11 +51,11 @@ public class LogParser
                           InfluxDAO influxDAO) throws IOException, ParseException
     {
         this.traceResult = trace;
-        ITimeParser timeParser = buildTimeParser(log, parseMode);
+        this.log = log;
+        this.timeZone = timeZone;
+        ITimeParser timeParser = buildTimeParser(parseMode);
         IDataParser dataParser = buildDataParser(parseMode);
         DataSetFactory dataSetFactory = getDataSetFactory(parseMode);
-
-        configureTimeZone(timeZone, timeParser);
 
         if (this.traceResult)
         {
@@ -55,7 +63,7 @@ public class LogParser
         }
 
         try (InfluxDAOWorker influxDAOWorker = buildDaoWorker(dbName, influxDAO, dataSetFactory)) {
-            parseEntries(log, timeParser, dataParser, influxDAOWorker);
+            parseEntries(this.log, timeParser, dataParser, influxDAOWorker);
         }
     }
     private InfluxDAOWorker buildDaoWorker(String dbName, InfluxDAO influxDAO, DataSetFactory dataSetFactory) {
@@ -65,13 +73,6 @@ public class LogParser
             influxDAOWorker.init(dbName);
         }
         return influxDAOWorker;
-    }
-
-    private void configureTimeZone(String timeZone, ITimeParser parser) {
-        if (timeZone != null)
-        {
-            parser.configureTimeZone(timeZone);
-        }
     }
 
     private void parseEntries(String log, ITimeParser timeParser, IDataParser dataParser,
@@ -94,19 +95,27 @@ public class LogParser
         }
     }
 
-    private ITimeParser buildTimeParser(String log, String parseMode) {
-        switch (parseMode)
-        {
-            case "sdng":
-                return new SdngTimeParser();
-            case "gc":
-                return new GCTimeParser();
-            case "top":
-                return new TopTimeParser(log);
-            default:
-                throw new IllegalArgumentException(
-                        "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
+    private ITimeParser buildTimeParser(String parseMode) {
+        TimeFactory timeFactory = timeFactories.get(parseMode + "TimeParserFactory");
+
+        if (timeFactory == null) {
+            throw new IllegalArgumentException(
+                    "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
         }
+
+        ITimeParser timeParser = timeFactory.create();
+        prepareTimeParser(timeParser);
+
+        return timeParser;
+    }
+
+    // Можно вместо этого метода сделать Spring-аннотации After в фабриках TimeParser'ов
+    private void prepareTimeParser(ITimeParser timeParser) {
+        if (this.timeZone != null)
+            timeParser.configureTimeZone(timeZone);
+
+        if (timeParser instanceof TopTimeParser)
+            ((TopTimeParser) timeParser).associateFile(this.log);
     }
 
     private IDataParser buildDataParser(String parseMode) {
