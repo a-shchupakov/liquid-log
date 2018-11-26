@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 import ru.naumen.perfhouse.influx.InfluxDAO;
 import ru.naumen.sd40.log.parser.parseMods.ParseMode;
-import ru.naumen.sd40.log.parser.storages.dataSets.factories.DataSetFactory;
 
 import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;

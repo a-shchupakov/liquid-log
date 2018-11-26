@@ -8,9 +8,8 @@ import ru.naumen.sd40.log.parser.parsers.ParsingUtils;
 import ru.naumen.sd40.log.parser.parsers.data.IDataParser;
 import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.TopTimeParser;
-import ru.naumen.sd40.log.parser.parsers.time.factories.TimeParserFactory;
-import ru.naumen.sd40.log.parser.storages.dataSets.IDataSet;
-import ru.naumen.sd40.log.parser.storages.dataSets.factories.DataSetFactory;
+import ru.naumen.sd40.log.parser.dataSets.IDataSet;
+import ru.naumen.sd40.log.parser.dataSets.factories.DataSetFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;

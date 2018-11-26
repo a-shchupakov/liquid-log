@@ -1,8 +1,7 @@
 package ru.naumen.sd40.log.parser.parsers.data;
 
 import org.springframework.stereotype.Component;
-import ru.naumen.sd40.log.parser.storages.dataSets.TopDataSet;
-import ru.naumen.sd40.log.parser.storages.TopDataStorage;
+import ru.naumen.sd40.log.parser.dataSets.TopDataSet;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -15,19 +14,18 @@ public class TopDataParser implements IDataParser<TopDataSet> {
     @Override
     public void parseLine(String line, TopDataSet dataSet) {
         //get la
-        TopDataStorage topDataStorage = dataSet.get();
         Matcher la = laPattern.matcher(line);
         if (la.find())
         {
-            topDataStorage.addLa(Double.parseDouble(la.group(1).split(",")[0].trim()));
+            dataSet.addLa(Double.parseDouble(la.group(1).split(",")[0].trim()));
         }
 
         //get cpu and mem
         Matcher cpuAndMemMatcher = cpuAndMemPattern.matcher(line);
         if (cpuAndMemMatcher.find())
         {
-            topDataStorage.addCpu(Double.valueOf(cpuAndMemMatcher.group(1)));
-            topDataStorage.addMem(Double.valueOf(cpuAndMemMatcher.group(2)));
+            dataSet.addCpu(Double.valueOf(cpuAndMemMatcher.group(1)));
+            dataSet.addMem(Double.valueOf(cpuAndMemMatcher.group(2)));
         }
     }
 }

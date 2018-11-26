@@ -6,8 +6,8 @@ import ru.naumen.sd40.log.parser.parsers.data.IDataParser;
 import ru.naumen.sd40.log.parser.parsers.data.SdngDataParser;
 import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.factories.SdngTimeParserFactory;
-import ru.naumen.sd40.log.parser.storages.dataSets.factories.DataSetFactory;
-import ru.naumen.sd40.log.parser.storages.dataSets.factories.SdngDataSetFactory;
+import ru.naumen.sd40.log.parser.dataSets.factories.DataSetFactory;
+import ru.naumen.sd40.log.parser.dataSets.factories.SdngDataSetFactory;
 
 @Component("sdng")
 public class SdngParseMode implements ParseMode {

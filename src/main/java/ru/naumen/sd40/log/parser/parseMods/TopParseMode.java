@@ -6,8 +6,8 @@ import ru.naumen.sd40.log.parser.parsers.data.IDataParser;
 import ru.naumen.sd40.log.parser.parsers.data.TopDataParser;
 import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.factories.TopTimeParserFactory;
-import ru.naumen.sd40.log.parser.storages.dataSets.factories.DataSetFactory;
-import ru.naumen.sd40.log.parser.storages.dataSets.factories.TopDataSetFactory;
+import ru.naumen.sd40.log.parser.dataSets.factories.DataSetFactory;
+import ru.naumen.sd40.log.parser.dataSets.factories.TopDataSetFactory;
 
 @Component("top")
 public class TopParseMode implements ParseMode {

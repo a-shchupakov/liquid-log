@@ -6,8 +6,8 @@ import ru.naumen.sd40.log.parser.parsers.data.IDataParser;
 import ru.naumen.sd40.log.parser.parsers.data.GCDataParser;
 import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.factories.GCTimeParserFactory;
-import ru.naumen.sd40.log.parser.storages.dataSets.factories.DataSetFactory;
-import ru.naumen.sd40.log.parser.storages.dataSets.factories.GCDataSetFactory;
+import ru.naumen.sd40.log.parser.dataSets.factories.DataSetFactory;
+import ru.naumen.sd40.log.parser.dataSets.factories.GCDataSetFactory;
 
 @Component("gc")
 public class GCParseMode implements ParseMode {
