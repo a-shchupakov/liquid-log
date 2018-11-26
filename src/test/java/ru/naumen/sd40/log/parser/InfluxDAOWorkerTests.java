@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import ru.naumen.perfhouse.influx.DBMock;
 import ru.naumen.sd40.log.parser.parsers.ParsingUtils;
+import ru.naumen.sd40.log.parser.storages.dataSets.factories.SdngDataSetFactory;
 
 public class InfluxDAOWorkerTests extends Assert {
     private DBMock dataBase;
@@ -17,7 +18,7 @@ public class InfluxDAOWorkerTests extends Assert {
     }
 
     private InfluxDAOWorker getDaoWorker() {
-        InfluxDAOWorker worker = new InfluxDAOWorker(dataBase);
+        InfluxDAOWorker worker = new InfluxDAOWorker(dataBase, true, new SdngDataSetFactory());
         worker.init("testDataBase");
         return worker;
     }

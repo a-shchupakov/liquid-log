@@ -2,16 +2,16 @@ package ru.naumen.sd40.log.parser.parsers.data;
 
 import org.springframework.stereotype.Component;
 import ru.naumen.sd40.log.parser.storages.ActionDataStorage;
-import ru.naumen.sd40.log.parser.storages.DataSet;
 import ru.naumen.sd40.log.parser.storages.ErrorDataStorage;
+import ru.naumen.sd40.log.parser.storages.dataSets.SdngDataSet;
 
 import java.util.HashSet;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component("sdng")
-public class SdngDataParser implements IDataParser {
+@Component("sdng" + "DataParser")
+public class SdngDataParser implements IDataParser<SdngDataSet> {
     private static final Pattern doneRegEx = Pattern.compile("Done\\((\\d+)\\): ?(.*?Action)");
     private static final Set<String> EXCLUDED_ACTIONS = new HashSet<>();
     static
@@ -24,9 +24,9 @@ public class SdngDataParser implements IDataParser {
     private static final Pattern fatalRegEx = Pattern.compile("^\\d+ \\[.+?\\] \\(.+?\\) FATAL");
 
     @Override
-    public void parseLine(String line, DataSet dataSet) {
-        parseActionLine(line, dataSet.getActionsData());
-        parseErrorLine(line, dataSet.getErrorData());
+    public void parseLine(String line, SdngDataSet dataSet) {
+        parseActionLine(line, dataSet.getAction());
+        parseErrorLine(line, dataSet.getError());
     }
 
     private void parseActionLine(String line, ActionDataStorage dataStorage) {

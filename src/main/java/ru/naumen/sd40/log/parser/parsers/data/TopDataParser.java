@@ -1,21 +1,21 @@
 package ru.naumen.sd40.log.parser.parsers.data;
 
 import org.springframework.stereotype.Component;
-import ru.naumen.sd40.log.parser.storages.DataSet;
+import ru.naumen.sd40.log.parser.storages.dataSets.TopDataSet;
 import ru.naumen.sd40.log.parser.storages.TopDataStorage;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component("top")
-public class TopDataParser implements IDataParser  {
+@Component("top" + "DataParser")
+public class TopDataParser implements IDataParser<TopDataSet> {
     private static final Pattern laPattern = Pattern.compile(".*load average:(.*)");
     private static final Pattern cpuAndMemPattern = Pattern
             .compile("^ *\\d+ \\S+ +\\S+ +\\S+ +\\S+ +\\S+ +\\S+ +\\S+ \\S+ +(\\S+) +(\\S+) +\\S+ java");
     @Override
-    public void parseLine(String line, DataSet dataSet) {
+    public void parseLine(String line, TopDataSet dataSet) {
         //get la
-        TopDataStorage topDataStorage = dataSet.getCpuData();
+        TopDataStorage topDataStorage = dataSet.get();
         Matcher la = laPattern.matcher(line);
         if (la.find())
         {
