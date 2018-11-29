@@ -1,16 +1,16 @@
-package ru.naumen.sd40.log.parser.parsers.time.factories;
+package ru.naumen.sd40.log.parser.parseMods.parsers.time.factories;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.WebApplicationContext;
-import ru.naumen.sd40.log.parser.parsers.time.GCTimeParser;
-import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
+import ru.naumen.sd40.log.parser.parseMods.parsers.time.ITimeParser;
+import ru.naumen.sd40.log.parser.parseMods.parsers.time.TopTimeParser;
 
 @Component
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
-public class GCTimeParserFactory implements TimeParserFactory {
-    private GCTimeParser timeParser = new GCTimeParser();
+public class TopTimeParserFactory implements TimeParserFactory {
+    private TopTimeParser timeParser = new TopTimeParser();
 
     @Override
     public ITimeParser create() {

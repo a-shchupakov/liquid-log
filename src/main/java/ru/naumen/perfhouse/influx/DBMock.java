@@ -1,9 +1,9 @@
 package ru.naumen.perfhouse.influx;
 
-import ru.naumen.sd40.log.parser.dataSets.GcDataSet;
-import ru.naumen.sd40.log.parser.dataSets.IDataSet;
-import ru.naumen.sd40.log.parser.dataSets.SdngDataSet;
-import ru.naumen.sd40.log.parser.dataSets.TopDataSet;
+import ru.naumen.sd40.log.parser.parseMods.dataSets.GcDataSet;
+import ru.naumen.sd40.log.parser.parseMods.dataSets.IDataSet;
+import ru.naumen.sd40.log.parser.parseMods.dataSets.SdngDataSet;
+import ru.naumen.sd40.log.parser.parseMods.dataSets.TopDataSet;
 
 import java.util.HashMap;
 

@@ -1,8 +1,8 @@
-package ru.naumen.sd40.log.parser.dataSets.factories;
+package ru.naumen.sd40.log.parser.parseMods.dataSets.factories;
 
 import org.springframework.stereotype.Component;
-import ru.naumen.sd40.log.parser.dataSets.GcDataSet;
-import ru.naumen.sd40.log.parser.dataSets.IDataSet;
+import ru.naumen.sd40.log.parser.parseMods.dataSets.GcDataSet;
+import ru.naumen.sd40.log.parser.parseMods.dataSets.IDataSet;
 
 @Component
 public class GCDataSetFactory implements DataSetFactory {

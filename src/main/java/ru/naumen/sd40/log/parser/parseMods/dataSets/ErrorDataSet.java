@@ -1,4 +1,4 @@
-package ru.naumen.sd40.log.parser.dataSets;
+package ru.naumen.sd40.log.parser.parseMods.dataSets;
 
 public class ErrorDataSet {
     private long warnCount;

@@ -2,12 +2,12 @@ package ru.naumen.sd40.log.parser.parseMods;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import ru.naumen.sd40.log.parser.parsers.data.IDataParser;
-import ru.naumen.sd40.log.parser.parsers.data.TopDataParser;
-import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
-import ru.naumen.sd40.log.parser.parsers.time.factories.TopTimeParserFactory;
-import ru.naumen.sd40.log.parser.dataSets.factories.DataSetFactory;
-import ru.naumen.sd40.log.parser.dataSets.factories.TopDataSetFactory;
+import ru.naumen.sd40.log.parser.parseMods.dataSets.factories.DataSetFactory;
+import ru.naumen.sd40.log.parser.parseMods.dataSets.factories.TopDataSetFactory;
+import ru.naumen.sd40.log.parser.parseMods.parsers.data.IDataParser;
+import ru.naumen.sd40.log.parser.parseMods.parsers.data.TopDataParser;
+import ru.naumen.sd40.log.parser.parseMods.parsers.time.ITimeParser;
+import ru.naumen.sd40.log.parser.parseMods.parsers.time.factories.TopTimeParserFactory;
 
 @Component("top")
 public class TopParseMode implements ParseMode {

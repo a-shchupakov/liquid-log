@@ -4,8 +4,8 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import ru.naumen.perfhouse.influx.DBMock;
-import ru.naumen.sd40.log.parser.parsers.ParsingUtils;
-import ru.naumen.sd40.log.parser.dataSets.factories.SdngDataSetFactory;
+import ru.naumen.sd40.log.parser.parseMods.dataSets.factories.SdngDataSetFactory;
+import ru.naumen.sd40.log.parser.parseMods.parsers.ParsingUtils;
 
 public class InfluxDAOWorkerTests extends Assert {
     private DBMock dataBase;

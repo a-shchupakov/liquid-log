@@ -1,8 +1,8 @@
-package ru.naumen.sd40.log.parser.dataSets.factories;
+package ru.naumen.sd40.log.parser.parseMods.dataSets.factories;
 
 import org.springframework.stereotype.Component;
-import ru.naumen.sd40.log.parser.dataSets.IDataSet;
-import ru.naumen.sd40.log.parser.dataSets.SdngDataSet;
+import ru.naumen.sd40.log.parser.parseMods.dataSets.IDataSet;
+import ru.naumen.sd40.log.parser.parseMods.dataSets.SdngDataSet;
 
 @Component
 public class SdngDataSetFactory implements DataSetFactory {
