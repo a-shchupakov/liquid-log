@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.naumen.perfhouse.statdata.Constants;
-import ru.naumen.sd40.log.parser.storages.*;
+import ru.naumen.sd40.log.parser.dataSets.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -86,32 +86,6 @@ public class InfluxDAO implements IDataBase
         return BatchPoints.database(dbName).build();
     }
 
-    private Builder addSdngFields(Builder builder, ActionDataStorage dones, ErrorDataStorage errors)
-    {
-        //@formatter:off
-        return builder
-                    .addField(COUNT, dones.getCount())
-                    .addField("min", dones.getMin())
-                    .addField(MEAN, dones.getMean())
-                    .addField(STDDEV, dones.getStddev())
-                    .addField(PERCENTILE50, dones.getPercent50())
-                    .addField(PERCENTILE95, dones.getPercent95())
-                    .addField(PERCENTILE99, dones.getPercent99())
-                    .addField(PERCENTILE999, dones.getPercent999())
-                    .addField(MAX, dones.getMax())
-                    .addField(ERRORS, errors.getErrorCount())
-                    .addField(ADD_ACTIONS, dones.getAddObjectActions())
-                    .addField(EDIT_ACTIONS, dones.getEditObjectsActions())
-                    .addField(LIST_ACTIONS, dones.getListActions())
-                    .addField(COMMENT_ACTIONS, dones.getCommentActions())
-                    .addField(GET_FORM_ACTIONS, dones.getFormActions())
-                    .addField(GET_DT_OBJECT_ACTIONS, dones.getDtObjectActions())
-                    .addField(SEARCH_ACTIONS, dones.getSearchActions())
-                    .addField(GET_CATALOG_ACTIONS, dones.getCatalogsActions());
-
-        //@formatter:on
-    }
-
     public void storeFromJSon(BatchPoints batch, String dbName, JSONObject data) {
         influx.createDatabase(dbName);
         long timestamp = (data.getLong("time"));
@@ -141,29 +115,17 @@ public class InfluxDAO implements IDataBase
         }
     }
 
-    private Builder addGcFields(Builder builder, GcDataStorage dataStorage) {
-        return builder
-                    .addField(GCTIMES, dataStorage.getGcTimes())
-                    .addField(AVARAGE_GC_TIME, dataStorage.getCalculatedAvg())
-                    .addField(MAX_GC_TIME, dataStorage.getMaxGcTime());
-    }
-
-    private Builder addTopFields(Builder builder, TopDataStorage dataStorage) {
-        return builder
-                    .addField(AVG_LA, dataStorage.getAvgLa())
-                    .addField(AVG_CPU, dataStorage.getAvgCpuUsage())
-                    .addField(AVG_MEM, dataStorage.getAvgMemUsage())
-                    .addField(MAX_LA, dataStorage.getMaxLa())
-                    .addField(MAX_CPU, dataStorage.getMaxCpu())
-                    .addField(MAX_MEM, dataStorage.getMaxMem());
-    }
-
-    public void storeData(String dbName, long date, DataSet dataSet, boolean traceResult) {
+    @Override
+    public void storeSdng(String dbName, long date, SdngDataSet dataSet, boolean traceResult) {
         Builder builder = Point.measurement(Constants.MEASUREMENT_NAME).time(date, TimeUnit.MILLISECONDS);
 
-        ActionDataStorage actionData = dataSet.getActionsData();
-        ErrorDataStorage errorData = dataSet.getErrorData();
+        ActionDataSet actionData = dataSet.getAction();
+        ErrorDataSet errorData = dataSet.getError();
+
         actionData.calculate();
+
+        if (actionData.isNaN())
+            return;
 
         if (traceResult) {
             System.out.print(String.format("%d;%d;%f;%f;%f;%f;%f;%f;%f;%f;%d\n", date, actionData.getCount(),
@@ -172,18 +134,65 @@ public class InfluxDAO implements IDataBase
                     actionData.getMax(), errorData.getErrorCount()));
         }
 
-        if (!actionData.isNaN())
-            builder = addSdngFields(builder, actionData, errorData);
-        else if (!dataSet.getGcData().isNaN())
-            builder = addGcFields(builder, dataSet.getGcData());
-        else if (!dataSet.getCpuData().isNaN())
-            builder = addTopFields(builder, dataSet.getCpuData());
-        else
-            return;
+        builder
+            .addField(COUNT, actionData.getCount())
+            .addField("min", actionData.getMin())
+            .addField(MEAN, actionData.getMean())
+            .addField(STDDEV, actionData.getStddev())
+            .addField(PERCENTILE50, actionData.getPercent50())
+            .addField(PERCENTILE95, actionData.getPercent95())
+            .addField(PERCENTILE99, actionData.getPercent99())
+            .addField(PERCENTILE999, actionData.getPercent999())
+            .addField(MAX, actionData.getMax())
+            .addField(ERRORS, errorData.getErrorCount())
+            .addField(ADD_ACTIONS, actionData.getAddObjectActions())
+            .addField(EDIT_ACTIONS, actionData.getEditObjectsActions())
+            .addField(LIST_ACTIONS, actionData.getListActions())
+            .addField(COMMENT_ACTIONS, actionData.getCommentActions())
+            .addField(GET_FORM_ACTIONS, actionData.getFormActions())
+            .addField(GET_DT_OBJECT_ACTIONS, actionData.getDtObjectActions())
+            .addField(SEARCH_ACTIONS, actionData.getSearchActions())
+            .addField(GET_CATALOG_ACTIONS, actionData.getCatalogsActions());
 
         Point point = builder.build();
         writePoint(dbName, point);
     }
+
+    @Override
+    public void storeGc(String dbName, long date, GcDataSet dataSet, boolean traceResult) {
+        Builder builder = Point.measurement(Constants.MEASUREMENT_NAME).time(date, TimeUnit.MILLISECONDS);
+
+        if (dataSet.isNaN())
+            return;
+
+        builder
+            .addField(GCTIMES, dataSet.getGcTimes())
+            .addField(AVARAGE_GC_TIME, dataSet.getCalculatedAvg())
+            .addField(MAX_GC_TIME, dataSet.getMaxGcTime());
+
+        Point point = builder.build();
+        writePoint(dbName, point);
+    }
+
+    @Override
+    public void storeTop(String dbName, long date, TopDataSet dataSet, boolean traceResult) {
+        Builder builder = Point.measurement(Constants.MEASUREMENT_NAME).time(date, TimeUnit.MILLISECONDS);
+
+        if (dataSet.isNaN())
+            return;
+
+        builder
+            .addField(AVG_LA, dataSet.getAvgLa())
+            .addField(AVG_CPU, dataSet.getAvgCpuUsage())
+            .addField(AVG_MEM, dataSet.getAvgMemUsage())
+            .addField(MAX_LA, dataSet.getMaxLa())
+            .addField(MAX_CPU, dataSet.getMaxCpu())
+            .addField(MAX_MEM, dataSet.getMaxMem());
+
+        Point point = builder.build();
+        writePoint(dbName, point);
+    }
+
 
     private void writeBatch(BatchPoints batch)
     {

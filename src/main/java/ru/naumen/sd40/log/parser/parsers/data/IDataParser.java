@@ -1,9 +1,9 @@
 package ru.naumen.sd40.log.parser.parsers.data;
 
 import org.springframework.stereotype.Component;
-import ru.naumen.sd40.log.parser.storages.DataSet;
+import ru.naumen.sd40.log.parser.dataSets.IDataSet;
 
 @Component
-public interface IDataParser {
-    void parseLine(String line, DataSet dataSet);
+public interface IDataParser<T extends IDataSet> {
+    void parseLine(String line, T dataSet);
 }

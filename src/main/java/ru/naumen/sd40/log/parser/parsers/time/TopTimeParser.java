@@ -13,22 +13,26 @@ public class TopTimeParser implements ITimeParser {private SimpleDateFormat sdf 
     private long currentTime = 0;
 
     private static final Pattern timeRegex = Pattern.compile("^_+ (\\S+)");
+    private static final Pattern fileRegex = Pattern.compile("\\d{8}|\\d{4}-\\d{2}-\\d{2}");
 
-    public TopTimeParser(String file) throws IllegalArgumentException
+    public TopTimeParser()
     {
-        //Supports these masks in file name: YYYYmmdd, YYY-mm-dd i.e. 20161101, 2016-11-01
-        Matcher matcher = Pattern.compile("\\d{8}|\\d{4}-\\d{2}-\\d{2}").matcher(file);
-        if (!matcher.find())
-        {
-            throw new IllegalArgumentException();
-        }
-        this.dataDate = matcher.group(0).replaceAll("-", "");
         sdf.setTimeZone(TimeZone.getTimeZone("GMT"));
     }
 
     public void configureTimeZone(String timeZone)
     {
         sdf.setTimeZone(TimeZone.getTimeZone(timeZone));
+    }
+
+    public void associateFile(String file) throws IllegalArgumentException {
+        //Supports these masks in file name: YYYYmmdd, YYY-mm-dd i.e. 20161101, 2016-11-01
+        Matcher matcher = fileRegex.matcher(file);
+        if (!matcher.find())
+        {
+            throw new IllegalArgumentException();
+        }
+        this.dataDate = matcher.group(0).replaceAll("-", "");
     }
 
     public long parseLine(String line) throws ParseException

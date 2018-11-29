@@ -5,11 +5,11 @@ import org.springframework.stereotype.Component;
 import ru.naumen.perfhouse.influx.InfluxDAO;
 import ru.naumen.sd40.log.parser.parsers.ParsingUtils;
 import ru.naumen.sd40.log.parser.parsers.data.IDataParser;
-import ru.naumen.sd40.log.parser.parsers.time.GCTimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
-import ru.naumen.sd40.log.parser.parsers.time.SdngTimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.TopTimeParser;
-import ru.naumen.sd40.log.parser.storages.DataSet;
+import ru.naumen.sd40.log.parser.parsers.time.factories.TimeParserFactory;
+import ru.naumen.sd40.log.parser.dataSets.IDataSet;
+import ru.naumen.sd40.log.parser.dataSets.factories.DataSetFactory;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -23,12 +23,21 @@ import java.util.Map;
 @Component
 public class LogParser
 {
-    private Map<String, IDataParser> dataParsers;
     private boolean traceResult;
+    private String timeZone;
+    private String log;
+
+    private Map<String, IDataParser> dataParsers;
+    private Map<String, DataSetFactory> dataSetFactories;
+    private Map<String, TimeParserFactory> timeFactories;
 
     @Autowired
-    public LogParser(Map<String, IDataParser> dataParsers) {
+    public LogParser(Map<String, IDataParser> dataParsers,
+                     Map<String, DataSetFactory> dataSetFactories,
+                     Map<String, TimeParserFactory> timeFactories) {
         this.dataParsers = dataParsers;
+        this.dataSetFactories = dataSetFactories;
+        this.timeFactories = timeFactories;
     }
 
     /**
@@ -40,34 +49,28 @@ public class LogParser
                           InfluxDAO influxDAO) throws IOException, ParseException
     {
         this.traceResult = trace;
-        ITimeParser timeParser = buildTimeParser(log, parseMode);
+        this.log = log;
+        this.timeZone = timeZone;
+        ITimeParser timeParser = buildTimeParser(parseMode);
         IDataParser dataParser = buildDataParser(parseMode);
-
-        configureTimeZone(timeZone, timeParser);
+        DataSetFactory dataSetFactory = getDataSetFactory(parseMode);
 
         if (this.traceResult)
         {
             System.out.print("Timestamp;Actions;Min;Mean;Stddev;50%%;95%%;99%%;99.9%%;Max;Errors\n");
         }
 
-        try (InfluxDAOWorker influxDAOWorker = buildDaoWorker(dbName, influxDAO)) {
-            parseEntries(log, timeParser, dataParser, influxDAOWorker);
+        try (InfluxDAOWorker influxDAOWorker = buildDaoWorker(dbName, influxDAO, dataSetFactory)) {
+            parseEntries(this.log, timeParser, dataParser, influxDAOWorker);
         }
     }
-    private InfluxDAOWorker buildDaoWorker(String dbName, InfluxDAO influxDAO) {
+    private InfluxDAOWorker buildDaoWorker(String dbName, InfluxDAO influxDAO, DataSetFactory dataSetFactory) {
         InfluxDAOWorker influxDAOWorker = null;
         if (dbName != null) {
-            influxDAOWorker = new InfluxDAOWorker(influxDAO, traceResult);
+            influxDAOWorker = new InfluxDAOWorker(influxDAO, traceResult, dataSetFactory);
             influxDAOWorker.init(dbName);
         }
         return influxDAOWorker;
-    }
-
-    private void configureTimeZone(String timeZone, ITimeParser parser) {
-        if (timeZone != null)
-        {
-            parser.configureTimeZone(timeZone);
-        }
     }
 
     private void parseEntries(String log, ITimeParser timeParser, IDataParser dataParser,
@@ -84,34 +87,54 @@ public class LogParser
 
                 long key = ParsingUtils.roundToFiveMins(time);
 
-                DataSet dataSet = influxDAOWorker.getDataSet(key);
+                IDataSet dataSet = influxDAOWorker.getDataSet(key);
                 dataParser.parseLine(line, dataSet);
             }
         }
     }
 
-    private ITimeParser buildTimeParser(String log, String parseMode) {
-        switch (parseMode)
-        {
-            case "sdng":
-                return new SdngTimeParser();
-            case "gc":
-                return new GCTimeParser();
-            case "top":
-                return new TopTimeParser(log);
-            default:
-                throw new IllegalArgumentException(
-                        "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
+    private ITimeParser buildTimeParser(String parseMode) {
+        TimeParserFactory timeParserFactory = timeFactories.get(parseMode + "TimeParserFactory");
+
+        if (timeParserFactory == null) {
+            throw new IllegalArgumentException(
+                    "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
         }
+
+        ITimeParser timeParser = timeParserFactory.create();
+        prepareTimeParser(timeParser);
+
+        return timeParser;
+    }
+
+    // Можно вместо этого метода сделать Spring-аннотации After в фабриках TimeParser'ов
+    private void prepareTimeParser(ITimeParser timeParser) {
+        if (this.timeZone != null)
+            timeParser.configureTimeZone(timeZone);
+
+        if (timeParser instanceof TopTimeParser)
+            ((TopTimeParser) timeParser).associateFile(this.log);
     }
 
     private IDataParser buildDataParser(String parseMode) {
-        IDataParser dataParser = dataParsers.get(parseMode);
+        IDataParser dataParser = dataParsers.get(parseMode + "DataParser");
+
         if (dataParser == null) {
             throw new IllegalArgumentException(
                     "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
         }
 
         return dataParser;
+    }
+
+    private DataSetFactory getDataSetFactory(String parseMode) {
+        DataSetFactory factory = dataSetFactories.get(parseMode + "DataSetFactory");
+
+        if (factory == null) {
+            throw new IllegalArgumentException(
+                    "Unknown parse mode! Available modes: sdng, gc, top. Requested mode: " + parseMode);
+        }
+
+        return factory;
     }
 }

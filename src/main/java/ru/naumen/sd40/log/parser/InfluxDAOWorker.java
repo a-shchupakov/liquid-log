@@ -1,7 +1,11 @@
 package ru.naumen.sd40.log.parser;
 
 import ru.naumen.perfhouse.influx.IDataBase;
-import ru.naumen.sd40.log.parser.storages.DataSet;
+import ru.naumen.sd40.log.parser.dataSets.GcDataSet;
+import ru.naumen.sd40.log.parser.dataSets.IDataSet;
+import ru.naumen.sd40.log.parser.dataSets.SdngDataSet;
+import ru.naumen.sd40.log.parser.dataSets.TopDataSet;
+import ru.naumen.sd40.log.parser.dataSets.factories.DataSetFactory;
 
 import java.io.Closeable;
 
@@ -9,16 +13,14 @@ public class InfluxDAOWorker implements Closeable {
     private String influxDb;
     private IDataBase influxStorage;
     private long currentKey = -1;
-    private DataSet currentDataSet;
-    private boolean traceResult = false;
+    private IDataSet currentDataSet;
+    private boolean traceResult;
+    private DataSetFactory dataSetFactory;
 
-    public InfluxDAOWorker(IDataBase dataBase, boolean traceResult) {
+    public InfluxDAOWorker(IDataBase dataBase, boolean traceResult, DataSetFactory dataSetFactory) {
         influxStorage = dataBase;
         this.traceResult = traceResult;
-    }
-
-    public InfluxDAOWorker(IDataBase dataBase) {
-        influxStorage = dataBase;
+        this.dataSetFactory = dataSetFactory;
     }
 
     public void init(String dbName) {
@@ -27,13 +29,13 @@ public class InfluxDAOWorker implements Closeable {
         influxStorage.connectToDB(influxDb);
     }
 
-    public DataSet getDataSet(long key) {
+    public IDataSet getDataSet(long key) {
         if (currentKey == key) {
             return currentDataSet;
         }
         if (currentKey != -1)
             saveToDB();
-        currentDataSet = new DataSet();
+        currentDataSet = dataSetFactory.create();
         currentKey = key;
         return currentDataSet;
     }
@@ -47,6 +49,23 @@ public class InfluxDAOWorker implements Closeable {
     }
 
     private void saveToDB() {
-        influxStorage.storeData(influxDb, currentKey, currentDataSet, traceResult);
+        if (currentDataSet instanceof SdngDataSet)
+            saveToDB((SdngDataSet) currentDataSet);
+        else if (currentDataSet instanceof TopDataSet)
+            saveToDB((TopDataSet) currentDataSet);
+        else if (currentDataSet instanceof GcDataSet)
+            saveToDB((GcDataSet) currentDataSet);
+    }
+
+    private void saveToDB(SdngDataSet dataSet) {
+        influxStorage.storeSdng(influxDb, currentKey, dataSet, traceResult);
+    }
+
+    private void saveToDB(TopDataSet dataSet) {
+        influxStorage.storeTop(influxDb, currentKey, dataSet, traceResult);
+    }
+
+    private void saveToDB(GcDataSet dataSet) {
+        influxStorage.storeGc(influxDb, currentKey, dataSet, traceResult);
     }
 }
