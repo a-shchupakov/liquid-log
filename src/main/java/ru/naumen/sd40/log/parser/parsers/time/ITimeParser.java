@@ -1,4 +1,4 @@
-package ru.naumen.sd40.log.parser.parseMods.parsers.time;
+package ru.naumen.sd40.log.parser.parsers.time;
 
 import java.text.ParseException;
 

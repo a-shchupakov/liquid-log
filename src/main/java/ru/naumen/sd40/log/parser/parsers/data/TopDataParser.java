@@ -1,7 +1,7 @@
-package ru.naumen.sd40.log.parser.parseMods.parsers.data;
+package ru.naumen.sd40.log.parser.parsers.data;
 
 import org.springframework.stereotype.Component;
-import ru.naumen.sd40.log.parser.parseMods.dataSets.TopDataSet;
+import ru.naumen.sd40.log.parser.dataSets.TopDataSet;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

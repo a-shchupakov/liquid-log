@@ -1,4 +1,4 @@
-package ru.naumen.sd40.log.parser.parseMods.dataSets;
+package ru.naumen.sd40.log.parser.dataSets;
 
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 

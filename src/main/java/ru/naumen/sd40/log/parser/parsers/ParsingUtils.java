@@ -1,4 +1,4 @@
-package ru.naumen.sd40.log.parser.parseMods.parsers;
+package ru.naumen.sd40.log.parser.parsers;
 
 public class ParsingUtils {
     private ParsingUtils() {}

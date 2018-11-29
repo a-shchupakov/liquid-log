@@ -1,9 +1,9 @@
-package ru.naumen.sd40.log.parser.parseMods.parsers.data;
+package ru.naumen.sd40.log.parser.parsers.data;
 
 import org.springframework.stereotype.Component;
-import ru.naumen.sd40.log.parser.parseMods.dataSets.ActionDataSet;
-import ru.naumen.sd40.log.parser.parseMods.dataSets.ErrorDataSet;
-import ru.naumen.sd40.log.parser.parseMods.dataSets.SdngDataSet;
+import ru.naumen.sd40.log.parser.dataSets.ActionDataSet;
+import ru.naumen.sd40.log.parser.dataSets.ErrorDataSet;
+import ru.naumen.sd40.log.parser.dataSets.SdngDataSet;
 
 import java.util.HashSet;
 import java.util.Set;

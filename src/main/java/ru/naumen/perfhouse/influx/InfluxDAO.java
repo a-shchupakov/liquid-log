@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import ru.naumen.perfhouse.statdata.Constants;
-import ru.naumen.sd40.log.parser.parseMods.dataSets.*;
+import ru.naumen.sd40.log.parser.dataSets.*;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
