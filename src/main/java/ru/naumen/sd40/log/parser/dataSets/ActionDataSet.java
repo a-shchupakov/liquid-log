@@ -5,7 +5,7 @@ import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class ActionDataSet implements IDataSet {
+public class ActionDataSet {
     private ArrayList<Integer> times = new ArrayList<>();
     private double min;
     private double mean;

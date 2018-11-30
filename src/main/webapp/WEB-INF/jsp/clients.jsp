@@ -1,6 +1,7 @@
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@ page import="java.util.List" %>
+<%@ page import="java.util.Set" %>
 <%@ page import="java.util.Map" %>
 <html>
 
@@ -54,22 +55,13 @@
                     <input class="form-control" type="text" name="dbName" placeholder="DataBase name" required>
                 </label>
             </div>
-            <div class="form-check">Parse mode<br>
-                <label class="form-check-label">
-                    <input class="form-check-input" type="radio" name="parseMode" value="sdng" checked>
-                    Sdng
-                </label>
-            </div>
-            <div class="form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" type="radio" name="parseMode" value="gc">
-                    Gc
-                </label>
-            </div>
-            <div class="form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" type="radio" name="parseMode" value="top">
-                    Top
+            <div class="form-group">
+                <label>Parse mode<br>
+                    <select class="form-control" name="parseMode">
+                        <% for(String parseMode: (Set<String>)request.getAttribute("parseModes")) { %>
+                            <option value="<%= parseMode %>"><%= parseMode %></option>
+                        <% } %>
+                    </select>
                 </label>
             </div>
             <div class="form-group">
@@ -140,7 +132,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="formCount">Max results</label>
+                        <label for="formMaxResults">Max results</label>
                         <input class="form-control" type="number" value="42" id="formMaxResults" name="maxResults">
                     </div>
 				</div>

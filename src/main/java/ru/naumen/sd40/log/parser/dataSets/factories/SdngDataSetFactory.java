@@ -4,7 +4,7 @@ import org.springframework.stereotype.Component;
 import ru.naumen.sd40.log.parser.dataSets.IDataSet;
 import ru.naumen.sd40.log.parser.dataSets.SdngDataSet;
 
-@Component("sdng" + "DataSetFactory")
+@Component
 public class SdngDataSetFactory implements DataSetFactory {
     @Override
     public IDataSet create() {

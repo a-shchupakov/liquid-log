@@ -6,7 +6,7 @@ import ru.naumen.sd40.log.parser.dataSets.GcDataSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component("gc" + "DataParser")
+@Component
 public class GCDataParser implements IDataParser<GcDataSet>  {
     private static final Pattern gcExecutionTime = Pattern.compile(".*real=(.*)secs.*");
 

@@ -6,7 +6,7 @@ import ru.naumen.sd40.log.parser.dataSets.TopDataSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@Component("top" + "DataParser")
+@Component
 public class TopDataParser implements IDataParser<TopDataSet> {
     private static final Pattern laPattern = Pattern.compile(".*load average:(.*)");
     private static final Pattern cpuAndMemPattern = Pattern

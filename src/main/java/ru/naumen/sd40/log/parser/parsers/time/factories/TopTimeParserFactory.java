@@ -7,7 +7,7 @@ import org.springframework.web.context.WebApplicationContext;
 import ru.naumen.sd40.log.parser.parsers.time.ITimeParser;
 import ru.naumen.sd40.log.parser.parsers.time.TopTimeParser;
 
-@Component("top" + "TimeParserFactory")
+@Component
 @Scope(value = WebApplicationContext.SCOPE_REQUEST, proxyMode = ScopedProxyMode.TARGET_CLASS)
 public class TopTimeParserFactory implements TimeParserFactory {
     private TopTimeParser timeParser = new TopTimeParser();
