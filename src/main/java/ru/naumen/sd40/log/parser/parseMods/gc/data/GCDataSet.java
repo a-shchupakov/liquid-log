@@ -6,13 +6,11 @@ import ru.naumen.sd40.log.parser.parseMods.interfaces.IDataSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ru.naumen.perfhouse.statdata.Constants.GarbageCollection.AVARAGE_GC_TIME;
-import static ru.naumen.perfhouse.statdata.Constants.GarbageCollection.GCTIMES;
-import static ru.naumen.perfhouse.statdata.Constants.GarbageCollection.MAX_GC_TIME;
 import static ru.naumen.sd40.log.parser.NumberUtils.getSafeDouble;
 import static ru.naumen.sd40.log.parser.NumberUtils.roundToTwoPlaces;
+import static ru.naumen.sd40.log.parser.parseMods.gc.GCParseMode.GarbageCollection.*;
 
-public class GcDataSet implements IDataSet {
+public class GCDataSet implements IDataSet {
     private DescriptiveStatistics ds = new DescriptiveStatistics();
 
     public void addValue(double value){

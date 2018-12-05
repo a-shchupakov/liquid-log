@@ -8,6 +8,6 @@ import ru.naumen.sd40.log.parser.parseMods.interfaces.IDataSet;
 public class GCDataSetFactory implements DataSetFactory {
     @Override
     public IDataSet create() {
-        return new GcDataSet();
+        return new GCDataSet();
     }
 }

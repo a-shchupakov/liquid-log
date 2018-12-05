@@ -7,9 +7,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
-import ru.naumen.perfhouse.statdata.DataType;
 import ru.naumen.perfhouse.statdata.StatData;
 import ru.naumen.perfhouse.statdata.StatDataService;
+import ru.naumen.sd40.log.parser.parseMods.DataType;
+import ru.naumen.sd40.log.parser.parseMods.gc.GCParseMode;
+import ru.naumen.sd40.log.parser.parseMods.sdng.SdngParseMode;
+import ru.naumen.sd40.log.parser.parseMods.top.TopParseMode;
 
 import java.text.ParseException;
 import java.util.HashMap;
@@ -37,7 +40,7 @@ public class HistoryController
             @PathVariable(name = "month", required = false) int month,
             @PathVariable(name = "day", required = false) int day) throws ParseException
     {
-        return getDataAndViewByDate(client, DataType.RESPONSE, year, month, day, HISTORY_VIEW);
+        return getDataAndViewByDate(client, SdngParseMode.SdngDataType.RESPONSE, year, month, day, HISTORY_VIEW);
     }
 
     @RequestMapping(path = "/history/{client}/actions/{year}/{month}/{day}")
@@ -46,7 +49,7 @@ public class HistoryController
             @PathVariable(name = "month", required = false) int month,
             @PathVariable(name = "day", required = false) int day) throws ParseException
     {
-        return getDataAndViewByDate(client, DataType.ACTIONS, year, month, day, ACTIONS_VIEW);
+        return getDataAndViewByDate(client, SdngParseMode.SdngDataType.ACTIONS, year, month, day, ACTIONS_VIEW);
     }
 
     @RequestMapping(path = "/history/{client}/gc/{year}/{month}/{day}")
@@ -55,7 +58,7 @@ public class HistoryController
             @PathVariable(name = "month", required = false) int month,
             @PathVariable(name = "day", required = false) int day) throws ParseException
     {
-        return getDataAndViewByDate(client, DataType.GARBAGE_COLLECTION, year, month, day, GC_VIEW);
+        return getDataAndViewByDate(client, GCParseMode.GCDataType.GARBAGE_COLLECTION, year, month, day, GC_VIEW);
     }
 
     @RequestMapping(path = "/history/{client}/top/{year}/{month}/{day}")
@@ -64,7 +67,7 @@ public class HistoryController
             @PathVariable(name = "month", required = false) int month,
             @PathVariable(name = "day", required = false) int day) throws ParseException
     {
-        return getDataAndViewByDate(client, DataType.TOP, year, month, day, CPU_VIEW);
+        return getDataAndViewByDate(client, TopParseMode.TopDataType.TOP, year, month, day, CPU_VIEW);
     }
 
     @RequestMapping(path = "/history/{client}/{year}/{month}")
@@ -72,7 +75,7 @@ public class HistoryController
             @PathVariable(name = "year", required = false) int year,
             @PathVariable(name = "month", required = false) int month) throws ParseException
     {
-        return getDataAndViewByDate(client, DataType.RESPONSE, year, month, 0, HISTORY_VIEW, true);
+        return getDataAndViewByDate(client, SdngParseMode.SdngDataType.RESPONSE, year, month, 0, HISTORY_VIEW, true);
     }
 
     @RequestMapping(path = "/history/{client}/actions/{year}/{month}")
@@ -80,7 +83,7 @@ public class HistoryController
             @PathVariable(name = "year", required = false) int year,
             @PathVariable(name = "month", required = false) int month) throws ParseException
     {
-        return getDataAndViewByDate(client, DataType.ACTIONS, year, month, 0, ACTIONS_VIEW, true);
+        return getDataAndViewByDate(client, SdngParseMode.SdngDataType.ACTIONS, year, month, 0, ACTIONS_VIEW, true);
     }
 
     @RequestMapping(path = "/history/{client}/gc/{year}/{month}")
@@ -88,7 +91,7 @@ public class HistoryController
             @PathVariable(name = "year", required = false) int year,
             @PathVariable(name = "month", required = false) int month) throws ParseException
     {
-        return getDataAndViewByDate(client, DataType.GARBAGE_COLLECTION, year, month, 0, GC_VIEW, true);
+        return getDataAndViewByDate(client, GCParseMode.GCDataType.GARBAGE_COLLECTION, year, month, 0, GC_VIEW, true);
     }
 
     @RequestMapping(path = "/history/{client}/top/{year}/{month}")
@@ -96,14 +99,14 @@ public class HistoryController
             @PathVariable(name = "year", required = false) int year,
             @PathVariable(name = "month", required = false) int month) throws ParseException
     {
-        return getDataAndViewByDate(client, DataType.TOP, year, month, 0, CPU_VIEW, true);
+        return getDataAndViewByDate(client, TopParseMode.TopDataType.TOP, year, month, 0, CPU_VIEW, true);
     }
 
     @RequestMapping(path = "/history/{client}")
     public ModelAndView indexLast864(@PathVariable("client") String client,
             @RequestParam(name = "count", defaultValue = "864") int count) throws ParseException
     {
-        ru.naumen.perfhouse.statdata.StatData d = service.getData(client, DataType.RESPONSE, count);
+        ru.naumen.perfhouse.statdata.StatData d = service.getData(client, SdngParseMode.SdngDataType.RESPONSE, count);
 
         if (d == null)
         {
@@ -120,7 +123,7 @@ public class HistoryController
     public ModelAndView gcLast864(@PathVariable("client") String client,
             @RequestParam(name = "count", defaultValue = "864") int count) throws ParseException
     {
-        return getDataAndView(client, DataType.GARBAGE_COLLECTION, count, GC_VIEW);
+        return getDataAndView(client, GCParseMode.GCDataType.GARBAGE_COLLECTION, count, GC_VIEW);
 
     }
 
@@ -184,42 +187,42 @@ public class HistoryController
     public ModelAndView actionsLast864(@PathVariable("client") String client,
             @RequestParam(name = "count", defaultValue = "864") int count) throws ParseException
     {
-        return getDataAndView(client, DataType.ACTIONS, count, ACTIONS_VIEW);
+        return getDataAndView(client, SdngParseMode.SdngDataType.ACTIONS, count, ACTIONS_VIEW);
     }
 
     @RequestMapping(path = "/history/{client}/top")
     public ModelAndView topLast864(@PathVariable("client") String client,
             @RequestParam(name = "count", defaultValue = "864") int count) throws ParseException
     {
-        return getDataAndView(client, DataType.TOP, count, CPU_VIEW);
+        return getDataAndView(client, TopParseMode.TopDataType.TOP, count, CPU_VIEW);
     }
 
     @RequestMapping(path = "/history/{client}/custom")
     public ModelAndView customIndex(@PathVariable("client") String client, @RequestParam("from") String from,
             @RequestParam("to") String to, @RequestParam("maxResults") int maxResults) throws ParseException
     {
-        return getDataAndViewCustom(client, DataType.RESPONSE, from, to, maxResults, HISTORY_VIEW);
+        return getDataAndViewCustom(client, SdngParseMode.SdngDataType.RESPONSE, from, to, maxResults, HISTORY_VIEW);
     }
 
     @RequestMapping(path = "/history/{client}/custom/actions")
     public ModelAndView customActions(@PathVariable("client") String client, @RequestParam("from") String from,
             @RequestParam("to") String to, @RequestParam("maxResults") int count) throws ParseException
     {
-        return getDataAndViewCustom(client, DataType.ACTIONS, from, to, count, ACTIONS_VIEW);
+        return getDataAndViewCustom(client, SdngParseMode.SdngDataType.ACTIONS, from, to, count, ACTIONS_VIEW);
     }
 
     @RequestMapping(path = "/history/{client}/custom/gc")
     public ModelAndView customGc(@PathVariable("client") String client, @RequestParam("from") String from,
             @RequestParam("to") String to, @RequestParam("maxResults") int count) throws ParseException
     {
-        return getDataAndViewCustom(client, DataType.GARBAGE_COLLECTION, from, to, count, GC_VIEW);
+        return getDataAndViewCustom(client, GCParseMode.GCDataType.GARBAGE_COLLECTION, from, to, count, GC_VIEW);
     }
 
     @RequestMapping(path = "/history/{client}/custom/top")
     public ModelAndView customTop(@PathVariable("client") String client, @RequestParam("from") String from,
             @RequestParam("to") String to, @RequestParam("maxResults") int count) throws ParseException
     {
-        return getDataAndViewCustom(client, DataType.TOP, from, to, count, CPU_VIEW);
+        return getDataAndViewCustom(client, TopParseMode.TopDataType.TOP, from, to, count, CPU_VIEW);
     }
 
 }

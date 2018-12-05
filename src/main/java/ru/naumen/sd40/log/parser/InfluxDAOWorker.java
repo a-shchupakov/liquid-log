@@ -1,11 +1,8 @@
 package ru.naumen.sd40.log.parser;
 
 import ru.naumen.perfhouse.influx.IDataBase;
-import ru.naumen.sd40.log.parser.parseMods.gc.data.GcDataSet;
 import ru.naumen.sd40.log.parser.parseMods.interfaces.DataSetFactory;
 import ru.naumen.sd40.log.parser.parseMods.interfaces.IDataSet;
-import ru.naumen.sd40.log.parser.parseMods.sdng.data.SdngDataSet;
-import ru.naumen.sd40.log.parser.parseMods.top.data.TopDataSet;
 
 import java.io.Closeable;
 

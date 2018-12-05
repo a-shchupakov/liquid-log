@@ -11,24 +11,14 @@ import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import ru.naumen.perfhouse.statdata.Constants;
-import ru.naumen.sd40.log.parser.parseMods.gc.data.GcDataSet;
+import ru.naumen.sd40.log.parser.parseMods.ParsingUtils.Constants;
 import ru.naumen.sd40.log.parser.parseMods.interfaces.IDataSet;
-import ru.naumen.sd40.log.parser.parseMods.sdng.data.ActionDataSet;
-import ru.naumen.sd40.log.parser.parseMods.sdng.data.ErrorDataSet;
-import ru.naumen.sd40.log.parser.parseMods.sdng.data.SdngDataSet;
-import ru.naumen.sd40.log.parser.parseMods.top.data.TopDataSet;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-
-import static ru.naumen.perfhouse.statdata.Constants.GarbageCollection.*;
-import static ru.naumen.perfhouse.statdata.Constants.PerformedActions.*;
-import static ru.naumen.perfhouse.statdata.Constants.ResponseTimes.*;
-import static ru.naumen.perfhouse.statdata.Constants.Top.*;
 
 /**
  * Created by doki on 24.10.16.

@@ -6,11 +6,9 @@ import ru.naumen.sd40.log.parser.parseMods.interfaces.IDataSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ru.naumen.perfhouse.statdata.Constants.Top.*;
-import static ru.naumen.perfhouse.statdata.Constants.Top.MAX_CPU;
-import static ru.naumen.perfhouse.statdata.Constants.Top.MAX_MEM;
 import static ru.naumen.sd40.log.parser.NumberUtils.getSafeDouble;
 import static ru.naumen.sd40.log.parser.NumberUtils.roundToTwoPlaces;
+import static ru.naumen.sd40.log.parser.parseMods.top.TopParseMode.Top.*;
 
 public class TopDataSet implements IDataSet {
     private DescriptiveStatistics laStat = new DescriptiveStatistics();

@@ -7,4 +7,10 @@ public class ParsingUtils {
         long count = parsedDate / min5;
         return count * min5;
     }
+
+    public static class Constants
+    {
+        public static final String MEASUREMENT_NAME = "perf";
+        public static final String TIME = "time";
+    }
 }

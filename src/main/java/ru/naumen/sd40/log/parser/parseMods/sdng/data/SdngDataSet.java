@@ -5,10 +5,9 @@ import ru.naumen.sd40.log.parser.parseMods.interfaces.IDataSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ru.naumen.perfhouse.statdata.Constants.PerformedActions.*;
-import static ru.naumen.perfhouse.statdata.Constants.ResponseTimes.*;
-import static ru.naumen.perfhouse.statdata.Constants.ResponseTimes.ERRORS;
-import static ru.naumen.perfhouse.statdata.Constants.ResponseTimes.MAX;
+
+import static ru.naumen.sd40.log.parser.parseMods.sdng.SdngParseMode.PerformedActions.*;
+import static ru.naumen.sd40.log.parser.parseMods.sdng.SdngParseMode.ResponseTimes.*;
 
 public class SdngDataSet implements IDataSet {
     private ActionDataSet actionDataSet = new ActionDataSet();
