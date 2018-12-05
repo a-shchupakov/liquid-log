@@ -1,8 +1,8 @@
 package ru.naumen.perfhouse.influx;
 
-import ru.naumen.sd40.log.parser.dataSets.GcDataSet;
-import ru.naumen.sd40.log.parser.dataSets.SdngDataSet;
-import ru.naumen.sd40.log.parser.dataSets.TopDataSet;
+import ru.naumen.sd40.log.parser.parseMods.gc.data.GcDataSet;
+import ru.naumen.sd40.log.parser.parseMods.sdng.data.SdngDataSet;
+import ru.naumen.sd40.log.parser.parseMods.top.data.TopDataSet;
 
 public interface IDataBase {
     void init();
