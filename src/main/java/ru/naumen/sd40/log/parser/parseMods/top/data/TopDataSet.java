@@ -3,6 +3,12 @@ package ru.naumen.sd40.log.parser.parseMods.top.data;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import ru.naumen.sd40.log.parser.parseMods.interfaces.IDataSet;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static ru.naumen.perfhouse.statdata.Constants.Top.*;
+import static ru.naumen.perfhouse.statdata.Constants.Top.MAX_CPU;
+import static ru.naumen.perfhouse.statdata.Constants.Top.MAX_MEM;
 import static ru.naumen.sd40.log.parser.NumberUtils.getSafeDouble;
 import static ru.naumen.sd40.log.parser.NumberUtils.roundToTwoPlaces;
 
@@ -59,5 +65,21 @@ public class TopDataSet implements IDataSet {
     public double getMaxMem()
     {
         return roundToTwoPlaces(getSafeDouble(memStat.getMax()));
+    }
+
+    @Override
+    public Map<String, Object> getRecords() {
+        Map<String, Object> records = new HashMap<>();
+
+        if (!isNaN()) {
+            records.put(AVG_LA, getAvgLa());
+            records.put(AVG_CPU, getAvgCpuUsage());
+            records.put(AVG_MEM, getAvgMemUsage());
+            records.put(MAX_LA, getMaxLa());
+            records.put(MAX_CPU, getMaxCpu());
+            records.put(MAX_MEM, getMaxMem());
+        }
+
+        return records;
     }
 }

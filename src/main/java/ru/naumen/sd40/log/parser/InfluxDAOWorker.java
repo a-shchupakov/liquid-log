@@ -43,29 +43,13 @@ public class InfluxDAOWorker implements Closeable {
     @Override
     public void close() {
         if (currentDataSet != null) {
+            // TODO: trace result here
             saveToDB();
         }
         currentDataSet = null;
     }
 
     private void saveToDB() {
-        if (currentDataSet instanceof SdngDataSet)
-            saveToDB((SdngDataSet) currentDataSet);
-        else if (currentDataSet instanceof TopDataSet)
-            saveToDB((TopDataSet) currentDataSet);
-        else if (currentDataSet instanceof GcDataSet)
-            saveToDB((GcDataSet) currentDataSet);
-    }
-
-    private void saveToDB(SdngDataSet dataSet) {
-        influxStorage.storeSdng(influxDb, currentKey, dataSet, traceResult);
-    }
-
-    private void saveToDB(TopDataSet dataSet) {
-        influxStorage.storeTop(influxDb, currentKey, dataSet, traceResult);
-    }
-
-    private void saveToDB(GcDataSet dataSet) {
-        influxStorage.storeGc(influxDb, currentKey, dataSet, traceResult);
+        influxStorage.storeData(influxDb, currentKey, currentDataSet);
     }
 }

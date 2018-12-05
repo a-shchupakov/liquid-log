@@ -3,6 +3,12 @@ package ru.naumen.sd40.log.parser.parseMods.gc.data;
 import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
 import ru.naumen.sd40.log.parser.parseMods.interfaces.IDataSet;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import static ru.naumen.perfhouse.statdata.Constants.GarbageCollection.AVARAGE_GC_TIME;
+import static ru.naumen.perfhouse.statdata.Constants.GarbageCollection.GCTIMES;
+import static ru.naumen.perfhouse.statdata.Constants.GarbageCollection.MAX_GC_TIME;
 import static ru.naumen.sd40.log.parser.NumberUtils.getSafeDouble;
 import static ru.naumen.sd40.log.parser.NumberUtils.roundToTwoPlaces;
 
@@ -31,5 +37,18 @@ public class GcDataSet implements IDataSet {
     public boolean isNaN()
     {
         return getGcTimes() == 0;
+    }
+
+    @Override
+    public Map<String, Object> getRecords() {
+        Map<String, Object> records = new HashMap<>();
+
+        if (!isNaN()) {
+            records.put(GCTIMES, getGcTimes());
+            records.put(AVARAGE_GC_TIME, getCalculatedAvg());
+            records.put(MAX_GC_TIME, getMaxGcTime());
+        }
+
+        return records;
     }
 }
