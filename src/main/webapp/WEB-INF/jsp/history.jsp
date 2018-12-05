@@ -1,4 +1,5 @@
-<%@page import="ru.naumen.perfhouse.statdata.Constants"%>
+<%@page import="ru.naumen.sd40.log.parser.parseMods.ParsingUtils.Constants"%>
+<%@page import="ru.naumen.sd40.log.parser.parseMods.sdng.SdngParseMode.ResponseTimes"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <html>
@@ -19,15 +20,15 @@
 
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <%
-    Number p50[] = (Number[])request.getAttribute(Constants.ResponseTimes.PERCENTILE50);
-    Number p95[] = (Number[])request.getAttribute(Constants.ResponseTimes.PERCENTILE95);
-    Number p99[] = (Number[])request.getAttribute(Constants.ResponseTimes.PERCENTILE99);
-    Number p999[] = (Number[])request.getAttribute(Constants.ResponseTimes.PERCENTILE999);
-    Number p100[] = (Number[])request.getAttribute(Constants.ResponseTimes.MAX);
-    Number count[]= (Number[])request.getAttribute(Constants.ResponseTimes.COUNT);
-    Number errors[]= (Number[])request.getAttribute(Constants.ResponseTimes.ERRORS);
-    Number mean[]= (Number[])request.getAttribute(Constants.ResponseTimes.MEAN);
-    Number stddev[]= (Number[])request.getAttribute(Constants.ResponseTimes.STDDEV);
+    Number p50[] = (Number[])request.getAttribute(ResponseTimes.PERCENTILE50);
+    Number p95[] = (Number[])request.getAttribute(ResponseTimes.PERCENTILE95);
+    Number p99[] = (Number[])request.getAttribute(ResponseTimes.PERCENTILE99);
+    Number p999[] = (Number[])request.getAttribute(ResponseTimes.PERCENTILE999);
+    Number p100[] = (Number[])request.getAttribute(ResponseTimes.MAX);
+    Number count[]= (Number[])request.getAttribute(ResponseTimes.COUNT);
+    Number errors[]= (Number[])request.getAttribute(ResponseTimes.ERRORS);
+    Number mean[]= (Number[])request.getAttribute(ResponseTimes.MEAN);
+    Number stddev[]= (Number[])request.getAttribute(ResponseTimes.STDDEV);
     Number times[] = (Number[])request.getAttribute(Constants.TIME);
     
   //Prepare links

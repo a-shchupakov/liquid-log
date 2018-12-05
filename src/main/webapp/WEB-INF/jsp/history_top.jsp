@@ -1,4 +1,5 @@
-<%@page import="ru.naumen.perfhouse.statdata.Constants"%>
+<%@page import="ru.naumen.sd40.log.parser.parseMods.ParsingUtils.Constants"%>
+<%@page import="ru.naumen.sd40.log.parser.parseMods.top.TopParseMode.Top"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 
 <html>
@@ -31,12 +32,12 @@
 <script src="http://code.highcharts.com/highcharts.js"></script>
 <%
     Number times[] = (Number[])request.getAttribute(Constants.TIME);
-    Number avgLa[]=  (Number[])request.getAttribute(Constants.Top.AVG_LA);
-    Number avgCpu[]=  (Number[])request.getAttribute(Constants.Top.AVG_CPU);
-    Number avgMem[]=  (Number[])request.getAttribute(Constants.Top.AVG_MEM);
-    Number maxLa[]=  (Number[])request.getAttribute(Constants.Top.MAX_LA);
-    Number maxCpu[]=  (Number[])request.getAttribute(Constants.Top.MAX_CPU);
-    Number maxMem[]=  (Number[])request.getAttribute(Constants.Top.MAX_MEM);
+    Number avgLa[]=  (Number[])request.getAttribute(Top.AVG_LA);
+    Number avgCpu[]=  (Number[])request.getAttribute(Top.AVG_CPU);
+    Number avgMem[]=  (Number[])request.getAttribute(Top.AVG_MEM);
+    Number maxLa[]=  (Number[])request.getAttribute(Top.MAX_LA);
+    Number maxCpu[]=  (Number[])request.getAttribute(Top.MAX_CPU);
+    Number maxMem[]=  (Number[])request.getAttribute(Top.MAX_MEM);
     
   //Prepare links
   	String path="";
