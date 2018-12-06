@@ -22,8 +22,6 @@
         .col-xs-10 {
             width: 11%;
         }
-
-        }
     </style>
 </head>
 

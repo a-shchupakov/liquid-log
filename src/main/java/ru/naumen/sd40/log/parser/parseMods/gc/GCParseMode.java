@@ -45,6 +45,11 @@ public class GCParseMode implements ParseMode {
         return dataParser;
     }
 
+    @Override
+    public DataType[] getDataTypes() {
+        return GCDataType.values();
+    }
+
     public enum GCDataType implements DataType {
         GARBAGE_COLLECTION(GarbageCollection.getProps());
 

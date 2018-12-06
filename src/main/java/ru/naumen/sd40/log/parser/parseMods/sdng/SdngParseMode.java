@@ -45,6 +45,11 @@ public class SdngParseMode implements ParseMode {
         return dataParser;
     }
 
+    @Override
+    public DataType[] getDataTypes() {
+        return SdngDataType.values();
+    }
+
     public enum SdngDataType implements DataType {
         RESPONSE(ResponseTimes.getProps()),
         ACTIONS(PerformedActions.getProps());

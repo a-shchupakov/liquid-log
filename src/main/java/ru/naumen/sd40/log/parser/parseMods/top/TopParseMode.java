@@ -46,6 +46,11 @@ public class TopParseMode implements ParseMode {
         return dataParser;
     }
 
+    @Override
+    public DataType[] getDataTypes() {
+        return TopDataType.values();
+    }
+
     public enum TopDataType implements DataType {
         TOP(Top.getProps());
 

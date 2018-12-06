@@ -10,10 +10,12 @@ import org.springframework.web.servlet.ModelAndView;
 import ru.naumen.perfhouse.statdata.StatData;
 import ru.naumen.perfhouse.statdata.StatDataService;
 import ru.naumen.sd40.log.parser.parseMods.DataType;
+import ru.naumen.sd40.log.parser.parseMods.ParseMode;
 import ru.naumen.sd40.log.parser.parseMods.gc.GCParseMode;
 import ru.naumen.sd40.log.parser.parseMods.sdng.SdngParseMode;
 import ru.naumen.sd40.log.parser.parseMods.top.TopParseMode;
 
+import javax.inject.Inject;
 import java.text.ParseException;
 import java.util.HashMap;
 import java.util.Map;
@@ -24,9 +26,15 @@ import java.util.Map;
 @Controller
 public class HistoryController
 {
-
     @Autowired
     StatDataService service;
+    private Map<String, ParseMode> parseModes;
+
+    @Inject
+    public HistoryController( Map<String, ParseMode> parseModes)
+    {
+        this.parseModes = parseModes;
+    }
 
     private static final String NO_HISTORY_VIEW = "no_history";
     private static final String HISTORY_VIEW = "history";

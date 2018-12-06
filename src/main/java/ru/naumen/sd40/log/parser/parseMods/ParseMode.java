@@ -8,4 +8,5 @@ public interface ParseMode {
     ITimeParser getTimeParser();
     DataSetFactory getDataSetFactory();
     IDataParser getDataParser();
+    DataType[] getDataTypes();
 }

@@ -13,6 +13,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.5/js/bootstrap.min.js"
             integrity="sha384-BLiI7JTZm+JWlgKa0M0kGRpJbF2J8q+qreVrKBC47e3K6BW78kGLrCkeRX6I9RoK"
             crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
     <link rel="stylesheet" href="/css/style.css"/>
 </head>
 
@@ -77,19 +78,30 @@
     <p>
         Feel free to hide/show specific percentile by clicking on chart's legend
     </p>
-    <ul class="nav nav-pills">
-		<li class="nav-item"><a class="nav-link active">Responses</a></li>
-		<li class="nav-item"><a class="btn btn-outline-primary" href="/history/${client}<%=custom %>/actions<%=path%>">Performed actions</a></li>
-		<li class="nav-item"><a class="btn btn-outline-primary" href="/history/${client}<%=custom %>/gc<%=path%>">Garbage Collection</a></li>
-		<li class="nav-item"><a class="btn btn-outline-primary" href="/history/${client}<%=custom %>/top<%=path%>">Top data</a></li>
+    <ul id="view-nav" class="nav nav-pills">
+		<li class="nav-item"><a class="nav-link active" onclick="setActive(event)">Responses</a></li>
+		<li class="nav-item"><a class="btn btn-outline-primary" href="/history/${client}<%=custom %>/actions<%=path%>" onclick="setActive(event)">Performed actions</a></li>
+		<li class="nav-item"><a class="btn btn-outline-primary" href="/history/${client}<%=custom %>/gc<%=path%>" onclick="setActive(event)">Garbage Collection</a></li>
+		<li class="nav-item"><a class="btn btn-outline-primary" href="/history/${client}<%=custom %>/top<%=path%>" onclick="setActive(event)">Top data</a></li>
 	</ul>
 </div>
 
 <div class="container" id="response-chart-container" style="height:600px;">
 </div>
 
-
 <script>
+
+    function setActive(event) {
+        alert("<%="Hello Java"%>")
+        // var element = document.getElementById("view-nav");
+        // for (var i = 0; i < element.children.length; i++) {
+        //     element.children[i].children[0].classList.add("btn", "btn-outline-primary");
+        //     element.children[i].children[0].classList.remove("active", "nav-link");
+        // }
+        // var target = event.target;
+        // target.classList.add("nav-link", "active");
+    }
+
 var p50 = [];
 var p95 = [];
 var p99 = [];
