@@ -66,7 +66,6 @@ public class TopParseMode implements ParseMode {
         }
     }
 
-
     public static class Top {
         private Top() { }
 
