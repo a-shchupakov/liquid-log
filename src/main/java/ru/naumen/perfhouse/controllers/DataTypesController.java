@@ -33,16 +33,32 @@ public class DataTypesController {
     }
 
     @RequestMapping(path = "/data_types/{client}")
-    public ModelAndView indexByDay(@PathVariable("client") String client) throws ParseException
+    public ModelAndView indexByDay(@PathVariable("client") String client,
+                                   @RequestParam(value = "year", required = false) Integer year,
+                                   @RequestParam(value = "month", required = false) Integer month,
+                                   @RequestParam(value = "day", required = false) Integer day,
+                                   @RequestParam(value = "from", required = false) String from,
+                                   @RequestParam(value = "to", required = false) String to,
+                                   @RequestParam("maxResults") int count) throws ParseException
     {
-        //TODO: здесь year moth day custom приходят в requestParam
         Map<String, Object> model = new HashMap<>();
         model.put("client", client);
+        if (from != null && to != null) {
+            model.put("custom", true);
+            model.put("from", from);
+            model.put("to", to);
+            model.put("maxResults", count);
+        }
+        else {
+            model.put("year", year);
+            model.put("month", month);
+            model.put("day", day);
+        }
         putDataTypes(model);
         return new ModelAndView(DATA_TYPES, model, HttpStatus.OK);
     }
 
-    @RequestMapping(path = "/graphics/{client}/{year}/{month}/{dataType}")
+    @RequestMapping(path = "/graphics/{client}/{dataType}/{year}/{month}")
     public ModelAndView indexByMonth(@PathVariable("client") String client, @PathVariable("dataType") String dataType,
                                      @PathVariable(name = "year", required = false) int year,
                                      @PathVariable(name = "month", required = false) int month) throws ParseException
@@ -51,7 +67,7 @@ public class DataTypesController {
         return new ModelAndView("forward:" + redirect);
     }
 
-    @RequestMapping(path = "/graphics/{client}/{year}/{month}/{day}/{dataType}")
+    @RequestMapping(path = "/graphics/{client}/{dataType}/{year}/{month}/{day}")
     public ModelAndView getGraphic(@PathVariable("client") String client, @PathVariable("dataType") String dataType,
                                    @PathVariable(name = "year", required = false) Integer year,
                                    @PathVariable(name = "month", required = false) Integer month,

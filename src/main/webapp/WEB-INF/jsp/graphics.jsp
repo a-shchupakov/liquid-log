@@ -26,10 +26,10 @@
 <body>
 <script src="http://code.highcharts.com/highcharts.js"></script>
 
-<div>
+<div style="margin-left: 20px">
     <br>
     <h1>Performance data for <%=request.getAttribute("client")%></h1>
-    <h3><a class="btn btn-success btn-lg" href="/">Client list</a></h3>
+    <button type="button" class="btn btn-success btn-lg" onclick="history.back()">Go back</button>
     <h4 id="date_range"></h4>
 </div>
 

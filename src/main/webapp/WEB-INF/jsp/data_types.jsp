@@ -22,6 +22,46 @@
     <link rel="stylesheet" href="/css/style.css"/>
 </head>
 <body>
+<%
+    //Prepare links
+    String path="";
+    String custom = "";
+    if(request.getAttribute("custom") == null){
+        Object year = request.getAttribute("year");
+        Object month = request.getAttribute("month");
+        Object day = request.getAttribute("day");
+
+        String countParam = (String)request.getParameter("count");
+
+        String params = "";
+        String datePath = "";
+
+        StringBuilder sb = new StringBuilder();
+
+
+        if(countParam != null){
+            params = sb.append("?count=").append(countParam).toString();
+        }else{
+            sb.append('/').append(year).append('/').append(month);
+            if(!day.toString().equals("0")){
+                sb.append('/').append(day);
+            }
+            datePath = sb.toString();
+        }
+        path = datePath + params;
+    }
+    else{
+        custom = "/custom";
+        Object from = request.getAttribute("from");
+        Object to = request.getAttribute("to");
+        Object maxResults = request.getAttribute("maxResults");
+
+        StringBuilder sb = new StringBuilder();
+        path = sb.append("?from=").append(from).append("&to=").append(to).append("&maxResults=").append(maxResults).toString();
+    }
+
+
+%>
 
 <div class="container">
     <br>
@@ -32,7 +72,11 @@
     </p>
     <ul id="view-nav" class="nav nav-pills">
         <% for(DataType dataType: ((List<DataType>)request.getAttribute("dataTypes"))) { %>
-        <li class="nav-item"><a class="btn btn-outline-primary"><%=ParsingUtils.stringifyDataType(dataType)%></a></li>
+        <li class="nav-item">
+            <a class="btn btn-outline-primary" href="/graphics/${client}<%=custom%>/<%=dataType.toString()%><%=path%>">
+                <%=ParsingUtils.stringifyDataType(dataType)%>
+            </a>
+        </li>
         <% } %>
     </ul>
 </div>
