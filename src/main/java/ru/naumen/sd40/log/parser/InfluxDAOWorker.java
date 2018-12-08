@@ -1,11 +1,8 @@
 package ru.naumen.sd40.log.parser;
 
 import ru.naumen.perfhouse.influx.IDataBase;
-import ru.naumen.sd40.log.parser.dataSets.GcDataSet;
-import ru.naumen.sd40.log.parser.dataSets.IDataSet;
-import ru.naumen.sd40.log.parser.dataSets.SdngDataSet;
-import ru.naumen.sd40.log.parser.dataSets.TopDataSet;
-import ru.naumen.sd40.log.parser.dataSets.factories.DataSetFactory;
+import ru.naumen.sd40.log.parser.parseMods.interfaces.DataSetFactory;
+import ru.naumen.sd40.log.parser.parseMods.interfaces.IDataSet;
 
 import java.io.Closeable;
 
@@ -43,29 +40,13 @@ public class InfluxDAOWorker implements Closeable {
     @Override
     public void close() {
         if (currentDataSet != null) {
+            // TODO: trace result here
             saveToDB();
         }
         currentDataSet = null;
     }
 
     private void saveToDB() {
-        if (currentDataSet instanceof SdngDataSet)
-            saveToDB((SdngDataSet) currentDataSet);
-        else if (currentDataSet instanceof TopDataSet)
-            saveToDB((TopDataSet) currentDataSet);
-        else if (currentDataSet instanceof GcDataSet)
-            saveToDB((GcDataSet) currentDataSet);
-    }
-
-    private void saveToDB(SdngDataSet dataSet) {
-        influxStorage.storeSdng(influxDb, currentKey, dataSet, traceResult);
-    }
-
-    private void saveToDB(TopDataSet dataSet) {
-        influxStorage.storeTop(influxDb, currentKey, dataSet, traceResult);
-    }
-
-    private void saveToDB(GcDataSet dataSet) {
-        influxStorage.storeGc(influxDb, currentKey, dataSet, traceResult);
+        influxStorage.storeData(influxDb, currentKey, currentDataSet);
     }
 }
