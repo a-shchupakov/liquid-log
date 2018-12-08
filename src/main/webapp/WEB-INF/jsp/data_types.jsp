@@ -43,7 +43,7 @@
             params = sb.append("?count=").append(countParam).toString();
         }else{
             sb.append('/').append(year).append('/').append(month);
-            if(!day.toString().equals("0")){
+            if(day != null){
                 sb.append('/').append(day);
             }
             datePath = sb.toString();

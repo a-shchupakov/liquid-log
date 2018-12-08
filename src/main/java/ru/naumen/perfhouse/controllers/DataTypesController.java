@@ -39,7 +39,7 @@ public class DataTypesController {
                                    @RequestParam(value = "day", required = false) Integer day,
                                    @RequestParam(value = "from", required = false) String from,
                                    @RequestParam(value = "to", required = false) String to,
-                                   @RequestParam("maxResults") int count) throws ParseException
+                                   @RequestParam(value = "maxResults", defaultValue = "1000") int count) throws ParseException
     {
         Map<String, Object> model = new HashMap<>();
         model.put("client", client);
@@ -63,7 +63,7 @@ public class DataTypesController {
                                      @PathVariable(name = "year", required = false) int year,
                                      @PathVariable(name = "month", required = false) int month) throws ParseException
     {
-        String redirect = String.format("/graphics/%s/%d/%d/%d/%s", client, year, month, 0, dataType);
+        String redirect = String.format("/graphics/%s/%s/%d/%d/%d", client, dataType, year, month, 0);
         return new ModelAndView("forward:" + redirect);
     }
 

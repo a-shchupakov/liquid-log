@@ -89,7 +89,7 @@
                 var index = this.point.index;
                 var date =  new Date(times[index]);
                 return Highcharts.dateFormat('%a %d %b %H:%M:%S', date)
-                    + '<br/> <b>'+this.series.name+'</b> '+ this.y + ' times <br/>'
+                    + '<br/> <b>'+this.series.name+'</b> '+ this.y + '<br/>'
             }
         },
         xAxis: {
