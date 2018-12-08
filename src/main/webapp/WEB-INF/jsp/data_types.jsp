@@ -1,7 +1,6 @@
 <%@ page import="ru.naumen.sd40.log.parser.parseMods.DataType" %>
 <%@ page import="java.util.List" %>
 <%@ page import="ru.naumen.sd40.log.parser.parseMods.ParsingUtils" %>
-<%@ page import="java.util.Comparator" %>
 <%--
   Created by IntelliJ IDEA.
   User: PK

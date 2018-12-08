@@ -1,5 +1,7 @@
 package ru.naumen.sd40.log.parser.parseMods;
 
+import java.util.Map;
+
 public class ParsingUtils {
     private ParsingUtils() {}
     public static long roundToFiveMins(long parsedDate) {
@@ -18,5 +20,9 @@ public class ParsingUtils {
         String str = dataType.toString().replace('_', ' ').toLowerCase();
         str = str.substring(0, 1).toUpperCase() + str.substring(1);
         return str;
+    }
+
+    public static String getJsonForGraphic(Map<String, Number[]> values, int turboThreshold) {
+        return null;
     }
 }

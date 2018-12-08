@@ -13,7 +13,9 @@ import ru.naumen.sd40.log.parser.parseMods.sdng.parser.data.SdngDataParser;
 import ru.naumen.sd40.log.parser.parseMods.sdng.parser.time.SdngTimeParserFactory;
 import ru.naumen.sd40.log.parser.parseMods.ParsingUtils.Constants;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component("sdng")
 public class SdngParseMode implements ParseMode {
@@ -51,20 +53,32 @@ public class SdngParseMode implements ParseMode {
     }
 
     public enum SdngDataType implements DataType {
-        RESPONSE(ResponseTimes.getProps()),
-        ACTIONS(PerformedActions.getProps());
+        RESPONSE(ResponseTimes.getProps(), ResponseTimes.getNames(), ResponseTimes.getUnits()),
+        ACTIONS(PerformedActions.getProps(), PerformedActions.getNames(), PerformedActions.getUnits());
 
         private List<String> properties;
+        private Map<String, String> names;
+        private Map<String, String> units;
 
-        SdngDataType(List<String> properties)
-        {
+        SdngDataType(List<String> properties, Map<String, String> names, Map<String, String> units) {
             this.properties = properties;
+            this.names = names;
+            this.units = units;
         }
 
         @Override
-        public List<String> getTypeProperties()
-        {
+        public List<String> getTypeProperties() {
             return this.properties;
+        }
+
+        @Override
+        public Map<String, String> fullNameMap() {
+            return names;
+        }
+
+        @Override
+        public Map<String, String> unitsMap() {
+            return units;
         }
     }
 
@@ -82,9 +96,69 @@ public class SdngParseMode implements ParseMode {
         public static final String MEAN = "mean";
         public static final String STDDEV = "stddev";
 
+        private static final String PERCENTILE50_FULL_NAME = "50";
+        private static final String PERCENTILE95_FULL_NAME = "95";
+        private static final String PERCENTILE99_FULL_NAME = "99";
+        private static final String PERCENTILE999_FULL_NAME = "99.9";
+        private static final String MAX_FULL_NAME = "Max";
+        private static final String MIN_FULL_NAME = "Min";
+        private static final String COUNT_FULL_NAME = "Count";
+        private static final String ERRORS_FULL_NAME = "Errors";
+        private static final String MEAN_FULL_NAME = "Mean";
+        private static final String STDDEV_FULL_NAME = "Stddev";
+
+        private static final String PERCENTILE50_UNIT = "%";
+        private static final String PERCENTILE95_UNIT = "%";
+        private static final String PERCENTILE99_UNIT = "%";
+        private static final String PERCENTILE999_UNIT = "%";
+        private static final String MAX_UNIT = "";
+        private static final String MIN_UNIT = "";
+        private static final String COUNT_UNIT = "";
+        private static final String ERRORS_UNIT = "";
+        private static final String MEAN_UNIT = "";
+        private static final String STDDEV_UNIT = "";
+
+        private static final Map<String, String> names;
+        private static final Map<String, String> units;
+
+        static {
+            names = new HashMap<>();
+            units = new HashMap<>();
+
+            names.put(PERCENTILE50, PERCENTILE50_FULL_NAME);
+            names.put(PERCENTILE95, PERCENTILE95_FULL_NAME);
+            names.put(PERCENTILE99, PERCENTILE99_FULL_NAME);
+            names.put(PERCENTILE999, PERCENTILE999_FULL_NAME);
+            names.put(MAX, MAX_FULL_NAME);
+            names.put(MIN, MIN_FULL_NAME);
+            names.put(COUNT, COUNT_FULL_NAME);
+            names.put(ERRORS, ERRORS_FULL_NAME);
+            names.put(MEAN, MEAN_FULL_NAME);
+            names.put(STDDEV, STDDEV_FULL_NAME);
+
+            units.put(PERCENTILE50, PERCENTILE50_UNIT);
+            units.put(PERCENTILE95, PERCENTILE95_UNIT);
+            units.put(PERCENTILE99, PERCENTILE99_UNIT);
+            units.put(PERCENTILE999, PERCENTILE999_UNIT);
+            units.put(MAX, MAX_UNIT);
+            units.put(MIN, MIN_UNIT);
+            units.put(COUNT, COUNT_UNIT);
+            units.put(ERRORS, ERRORS_UNIT);
+            units.put(MEAN, MEAN_UNIT);
+            units.put(STDDEV, STDDEV_UNIT);
+        }
+
         static List<String> getProps() {
             return Lists.newArrayList(Constants.TIME, COUNT, ERRORS, MEAN, STDDEV, PERCENTILE50, PERCENTILE95, PERCENTILE99,
                     PERCENTILE999, MAX, MIN);
+        }
+
+        static Map<String, String> getNames() {
+            return names;
+        }
+
+        static Map<String, String> getUnits() {
+            return units;
         }
     }
 
@@ -103,10 +177,65 @@ public class SdngParseMode implements ParseMode {
         public static final String ACTIONS_COUNT = "count";
         public static final String GET_CATALOG_ACTIONS = "getCatalogActions";
 
+        private static final String ADD_ACTIONS_FULL_NAME = "AddObject";
+        private static final String EDIT_ACTIONS_FULL_NAME = "EditObject";
+        private static final String LIST_ACTIONS_FULL_NAME = "GetList";
+        private static final String COMMENT_ACTIONS_FULL_NAME = "Comment";
+        private static final String GET_FORM_ACTIONS_FULL_NAME = "GetForm";
+        private static final String GET_DT_OBJECT_ACTIONS_FULL_NAME = "GetDtObject";
+        private static final String SEARCH_ACTIONS_FULL_NAME = "Search";
+        private static final String ACTIONS_COUNT_FULL_NAME = "Summary";
+        private static final String GET_CATALOG_ACTIONS_FULL_NAME = "GetCatalog";
+
+        private static final String ADD_ACTIONS_UNIT = "";
+        private static final String EDIT_ACTIONS_UNIT = "";
+        private static final String LIST_ACTIONS_UNIT = "";
+        private static final String COMMENT_ACTIONS_UNIT = "";
+        private static final String GET_FORM_ACTIONS_UNIT = "";
+        private static final String GET_DT_OBJECT_ACTIONS_UNIT = "";
+        private static final String SEARCH_ACTIONS_UNIT = "";
+        private static final String ACTIONS_COUNT_UNIT = "";
+        private static final String GET_CATALOG_ACTIONS_UNIT = "";
+
+        private static final Map<String, String> names;
+        private static final Map<String, String> units;
+
+        static {
+            names = new HashMap<>();
+            units = new HashMap<>();
+
+            names.put(ADD_ACTIONS, ADD_ACTIONS_FULL_NAME);
+            names.put(EDIT_ACTIONS, EDIT_ACTIONS_FULL_NAME);
+            names.put(LIST_ACTIONS, LIST_ACTIONS_FULL_NAME);
+            names.put(COMMENT_ACTIONS, COMMENT_ACTIONS_FULL_NAME);
+            names.put(GET_FORM_ACTIONS, GET_FORM_ACTIONS_FULL_NAME);
+            names.put(GET_DT_OBJECT_ACTIONS, GET_DT_OBJECT_ACTIONS_FULL_NAME);
+            names.put(SEARCH_ACTIONS, SEARCH_ACTIONS_FULL_NAME);
+            names.put(ACTIONS_COUNT, ACTIONS_COUNT_FULL_NAME);
+            names.put(GET_CATALOG_ACTIONS, GET_CATALOG_ACTIONS_FULL_NAME);
+
+            units.put(ADD_ACTIONS, ADD_ACTIONS_UNIT);
+            units.put(EDIT_ACTIONS, EDIT_ACTIONS_UNIT);
+            units.put(LIST_ACTIONS, LIST_ACTIONS_UNIT);
+            units.put(COMMENT_ACTIONS, COMMENT_ACTIONS_UNIT);
+            units.put(GET_FORM_ACTIONS, GET_FORM_ACTIONS_UNIT);
+            units.put(GET_DT_OBJECT_ACTIONS, GET_DT_OBJECT_ACTIONS_UNIT);
+            units.put(SEARCH_ACTIONS, SEARCH_ACTIONS_UNIT);
+            units.put(ACTIONS_COUNT, ACTIONS_COUNT_UNIT);
+            units.put(GET_CATALOG_ACTIONS, GET_CATALOG_ACTIONS_UNIT);
+        }
+
         static List<String> getProps() {
             return Lists.newArrayList(Constants.TIME, ADD_ACTIONS, EDIT_ACTIONS, LIST_ACTIONS, COMMENT_ACTIONS, ACTIONS_COUNT,
                     GET_FORM_ACTIONS, GET_DT_OBJECT_ACTIONS, SEARCH_ACTIONS, GET_CATALOG_ACTIONS);
         }
 
+        static Map<String, String> getNames() {
+            return names;
+        }
+
+        static Map<String, String> getUnits() {
+            return units;
+        }
     }
 }
