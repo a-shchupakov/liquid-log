@@ -59,7 +59,7 @@ public class ClientsController
 
             clientMonthLinks.put(it, "/data_types/" + it + "?year=" + now.getYear() + "&month=" + now.getMonthOfYear());
             clientPreviousMonthLinks.put(it,
-                    "/data_types/" + it + "&year=" + prevMonth.getYear() + "&month=" + prevMonth.getMonthOfYear());
+                    "/data_types/" + it + "?year=" + prevMonth.getYear() + "&month=" + prevMonth.getMonthOfYear());
             clientLast864Links.put(it, "/data_types/" + it + "?count=864");
             clientLast2016Links.put(it, "/data_types/" + it + "?count=2016");
         });
