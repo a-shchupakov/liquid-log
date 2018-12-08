@@ -68,9 +68,8 @@
     resultSeries = [];
     for (var i = 0; i < names.length; i++) {
         resultSeries.push({
-            name: names[i],
+            name: names[i] + units[i],
             data: dataFetched[i],
-            unit: units[i],
             turboThreshold: 10000
         })
     }
@@ -89,7 +88,7 @@
                 var index = this.point.index;
                 var date =  new Date(times[index]);
                 return Highcharts.dateFormat('%a %d %b %H:%M:%S', date)
-                    + '<br/> <b>'+this.series.name+'</b> '+ this.y + '<br/>'
+                    + '<br/> <b>'+this.series.name+'</b> - '+ this.y + ' times<br/>'
             }
         },
         xAxis: {
