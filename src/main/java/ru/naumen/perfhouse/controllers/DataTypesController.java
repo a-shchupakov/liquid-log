@@ -106,13 +106,7 @@ public class DataTypesController {
             return new ModelAndView(NO_HISTORY_VIEW);
         }
         Map<String, Object> model = new HashMap<>();
-        model.put("data", data.asModel());
-        model.put("fullNames", dataType.fullNameMap());
-        model.put("units", dataType.unitsMap());
-        model.put("dataTypeName", ParsingUtils.stringifyDataType(dataType));
-        model.put("title", dataType.getDisplayName());
-
-        model.put("client", client);
+        putDataInModel(model, client, data, dataType);
 
         return new ModelAndView(viewName, model, HttpStatus.OK);
     }
@@ -127,16 +121,7 @@ public class DataTypesController {
 
         dataDate = compress ? service.compress(dataDate, 3 * 60 * 24 / 5) : dataDate;
         Map<String, Object> model = new HashMap<>();
-        model.put("data", dataDate.asModel());
-        model.put("fullNames", type.fullNameMap());
-        model.put("units", type.unitsMap());
-        model.put("dataTypeName", ParsingUtils.stringifyDataType(type));
-        model.put("title", type.getDisplayName());
-
-        model.put("client", client);
-        model.put("year", year);
-        model.put("month", month);
-        model.put("day", day);
+        putDataInModel(model, client, dataDate, type);
 
         return new ModelAndView(viewName, model, HttpStatus.OK);
     }
@@ -150,17 +135,7 @@ public class DataTypesController {
         }
         data = service.compress(data, maxResults);
         Map<String, Object> model = new HashMap<>();
-        model.put("data", data.asModel());
-        model.put("fullNames", dataType.fullNameMap());
-        model.put("units", dataType.unitsMap());
-        model.put("dataTypeName", ParsingUtils.stringifyDataType(dataType));
-        model.put("title", dataType.getDisplayName());
-
-        model.put("client", client);
-        model.put("custom", true);
-        model.put("from", from);
-        model.put("to", to);
-        model.put("maxResults", maxResults);
+        putDataInModel(model, client, data, dataType);
 
         return new ModelAndView(viewName, model, HttpStatus.OK);
     }
@@ -181,5 +156,14 @@ public class DataTypesController {
             }
         }
         return null;
+    }
+
+    private void putDataInModel(Map<String, Object> model, String client, StatData data, DataType dataType) {
+        model.put("data", data.asModel());
+        model.put("fullNames", dataType.fullNameMap());
+        model.put("units", dataType.unitsMap());
+        model.put("dataTypeName", ParsingUtils.stringifyDataType(dataType));
+        model.put("title", dataType.getDisplayName());
+        model.put("client", client);
     }
 }
