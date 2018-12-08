@@ -44,6 +44,7 @@
         Set<String> namesSet = values.keySet();
         Number times[] = values.remove(ParsingUtils.Constants.TIME);
         String names[] = namesSet.toArray(new String[namesSet.size()]);
+        String unitsArray[] = units.values().toArray(new String[units.values().size()]);
         List<Number[]> entries =  new ArrayList<>(values.values());
     %>
 
@@ -122,5 +123,30 @@
     document.getElementById('date_range').innerHTML += 'From: '+new Date(times[<%=times.length%>-1])+'<br/>To:&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;' +new Date(times[0])
 
 </script>
+
+<div class="container scroll-container">
+    <table class="table table-fixed header-fixed">
+        <thead class="thead-inverse">
+            <th class="col-xs-2">Time</th>
+            <%for (int i = 0; i < names.length; i++) {%>
+            <th class="col-xs-1"><%=fullNames.get(names[i]) + unitsArray[i]%></th>
+            <%}%>
+        </thead>
+        <tbody>
+        <% for(int i=0;i<times.length;i++) {%>
+            <tr class="row">
+                <td class="col-xs-2" style="text-align:center;">
+                    <%= new java.util.Date(times[i].longValue()).toString() %>
+                </td>
+                <% for(int j=0;j<names.length;j++) {%>
+                <td class="col-xs-1">
+                    <%= java.lang.Math.round(entries.get(j)[i].doubleValue()) %>
+                </td>
+                <%}%>
+            </tr>
+        <%}%>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>
