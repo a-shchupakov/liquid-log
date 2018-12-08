@@ -10,6 +10,7 @@ import ru.naumen.perfhouse.statdata.StatData;
 import ru.naumen.perfhouse.statdata.StatDataService;
 import ru.naumen.sd40.log.parser.parseMods.DataType;
 import ru.naumen.sd40.log.parser.parseMods.ParseMode;
+import ru.naumen.sd40.log.parser.parseMods.ParsingUtils;
 
 import javax.inject.Inject;
 import java.text.ParseException;
@@ -90,6 +91,10 @@ public class DataTypesController {
         }
         Map<String, Object> model = new HashMap<>();
         model.put("data", data.asModel());
+        model.put("fullNames", dataType.fullNameMap());
+        model.put("units", dataType.unitsMap());
+        model.put("dataTypeName", ParsingUtils.stringifyDataType(dataType));
+        model.put("title", dataType.getDisplayName());
 
         model.put("client", client);
 
@@ -105,7 +110,13 @@ public class DataTypesController {
         }
 
         dataDate = compress ? service.compress(dataDate, 3 * 60 * 24 / 5) : dataDate;
-        Map<String, Object> model = new HashMap<>(dataDate.asModel());
+        Map<String, Object> model = new HashMap<>();
+        model.put("data", dataDate.asModel());
+        model.put("fullNames", type.fullNameMap());
+        model.put("units", type.unitsMap());
+        model.put("dataTypeName", ParsingUtils.stringifyDataType(type));
+        model.put("title", type.getDisplayName());
+
         model.put("client", client);
         model.put("year", year);
         model.put("month", month);
@@ -124,6 +135,10 @@ public class DataTypesController {
         data = service.compress(data, maxResults);
         Map<String, Object> model = new HashMap<>();
         model.put("data", data.asModel());
+        model.put("fullNames", dataType.fullNameMap());
+        model.put("units", dataType.unitsMap());
+        model.put("dataTypeName", ParsingUtils.stringifyDataType(dataType));
+        model.put("title", dataType.getDisplayName());
 
         model.put("client", client);
         model.put("custom", true);

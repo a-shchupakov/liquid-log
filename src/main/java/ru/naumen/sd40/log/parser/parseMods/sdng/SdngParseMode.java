@@ -53,17 +53,19 @@ public class SdngParseMode implements ParseMode {
     }
 
     public enum SdngDataType implements DataType {
-        RESPONSE(ResponseTimes.getProps(), ResponseTimes.getNames(), ResponseTimes.getUnits()),
-        ACTIONS(PerformedActions.getProps(), PerformedActions.getNames(), PerformedActions.getUnits());
+        RESPONSE(ResponseTimes.getProps(), ResponseTimes.getNames(), ResponseTimes.getUnits(), ResponseTimes.TITLE),
+        ACTIONS(PerformedActions.getProps(), PerformedActions.getNames(), PerformedActions.getUnits(), PerformedActions.TITLE);
 
         private List<String> properties;
         private Map<String, String> names;
         private Map<String, String> units;
+        private String title;
 
-        SdngDataType(List<String> properties, Map<String, String> names, Map<String, String> units) {
+        SdngDataType(List<String> properties, Map<String, String> names, Map<String, String> units, String title) {
             this.properties = properties;
             this.names = names;
             this.units = units;
+            this.title = title;
         }
 
         @Override
@@ -80,10 +82,17 @@ public class SdngParseMode implements ParseMode {
         public Map<String, String> unitsMap() {
             return units;
         }
+
+        @Override
+        public String getDisplayName() {
+            return title;
+        }
     }
 
     public static class ResponseTimes {
         private ResponseTimes() { }
+
+        public static final String TITLE = "Response times";
 
         public static final String PERCENTILE50 = "percent50";
         public static final String PERCENTILE95 = "percent95";
@@ -163,9 +172,8 @@ public class SdngParseMode implements ParseMode {
     }
 
     public static class PerformedActions {
-        private PerformedActions() {
-
-        }
+        private PerformedActions() { }
+        public static final String TITLE = "Performed actions";
 
         public static final String ADD_ACTIONS = "addActions";
         public static final String EDIT_ACTIONS = "editActions";

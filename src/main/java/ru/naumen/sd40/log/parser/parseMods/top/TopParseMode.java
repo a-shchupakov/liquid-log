@@ -54,16 +54,18 @@ public class TopParseMode implements ParseMode {
     }
 
     public enum TopDataType implements DataType {
-        TOP(Top.getProps(), Top.getNames(), Top.getUnits());
+        TOP(Top.getProps(), Top.getNames(), Top.getUnits(), Top.TITLE);
 
         private List<String> properties;
         private Map<String, String> names;
         private Map<String, String> units;
+        private String title;
 
-        TopDataType(List<String> properties, Map<String, String> names ,Map<String, String> units) {
+        TopDataType(List<String> properties, Map<String, String> names ,Map<String, String> units, String title) {
             this.properties = properties;
             this.names = names;
             this.units = units;
+            this.title = title;
         }
 
         @Override
@@ -80,10 +82,16 @@ public class TopParseMode implements ParseMode {
         public Map<String, String> unitsMap() {
             return units;
         }
+
+        @Override
+        public String getDisplayName() {
+            return title;
+        }
     }
 
     public static class Top {
         private Top() { }
+        public static final String TITLE = "Top data";
 
         public static final String AVG_LA = "avgLa";
         public static final String AVG_CPU = "avgCpu";

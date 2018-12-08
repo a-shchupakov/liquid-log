@@ -7,4 +7,5 @@ public interface DataType {
     List<String> getTypeProperties();
     Map<String, String> fullNameMap();
     Map<String, String> unitsMap();
+    String getDisplayName();
 }

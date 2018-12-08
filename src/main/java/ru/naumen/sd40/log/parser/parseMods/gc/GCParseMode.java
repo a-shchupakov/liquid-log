@@ -53,16 +53,18 @@ public class GCParseMode implements ParseMode {
     }
 
     public enum GCDataType implements DataType {
-        GARBAGE_COLLECTION(GarbageCollection.getProps(), GarbageCollection.getNames(), GarbageCollection.getUnits());
+        GARBAGE_COLLECTION(GarbageCollection.getProps(), GarbageCollection.getNames(), GarbageCollection.getUnits(), GarbageCollection.TITLE);
 
         private List<String> properties;
         private Map<String, String> names;
         private Map<String, String> units;
+        private String title;
 
-        GCDataType(List<String> properties, Map<String, String> names, Map<String, String> units) {
+        GCDataType(List<String> properties, Map<String, String> names, Map<String, String> units, String title) {
             this.properties = properties;
             this.names = names;
             this.units = units;
+            this.title = title;
         }
 
         @Override
@@ -79,11 +81,17 @@ public class GCParseMode implements ParseMode {
         public Map<String, String> unitsMap() {
             return units;
         }
+
+        @Override
+        public String getDisplayName() {
+            return title;
+        }
     }
 
 
     public static class GarbageCollection {
         private GarbageCollection() { }
+        public static final String TITLE = "Garbage collection";
 
         public static final String GCTIMES = "gcTimes";
         public static final String AVARAGE_GC_TIME = "avgGcTime";

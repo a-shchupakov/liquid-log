@@ -237,8 +237,6 @@ var myChart = Highcharts.chart('actions-chart-container', {
         xAxis: {
             labels:{
                 formatter:function(obj){
-//                        var index = this.point.index;
-//                        var date =  new Date(times[index]);
                         return Highcharts.dateFormat('%a %d %b %H:%M:%S', new Date(times[this.value]));
                     }
                 },

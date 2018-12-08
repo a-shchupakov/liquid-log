@@ -23,38 +23,18 @@
 </head>
 <body>
 
-
 <div class="container">
     <br>
     <h1>Performance data for <%=request.getAttribute("client")%></h1>
     <h3><a class="btn btn-success btn-lg" href="/">Client list</a></h3>
-    <h4 id="date_range"></h4>
     <p>
         Feel free to hide/show specific percentile by clicking on chart's legend
     </p>
     <ul id="view-nav" class="nav nav-pills">
         <% for(DataType dataType: ((List<DataType>)request.getAttribute("dataTypes"))) { %>
-        <li class="nav-item"><a class="btn btn-outline-primary" onclick="setActive(event, '<%=dataType%>')"><%=ParsingUtils.stringifyDataType(dataType)%></a></li>
+        <li class="nav-item"><a class="btn btn-outline-primary"><%=ParsingUtils.stringifyDataType(dataType)%></a></li>
         <% } %>
     </ul>
 </div>
-
-<div class="container" id="chart-container" style="height:600px;">
-</div>
-
-<script>
-
-    function setActive(event, dataType) {
-
-        var element = document.getElementById("view-nav");
-        for (var i = 0; i < element.children.length; i++) {
-            element.children[i].children[0].classList.add("btn", "btn-outline-primary");
-            element.children[i].children[0].classList.remove("active", "nav-link");
-        }
-        var target = event.target;
-        target.classList.add("nav-link", "active");
-    }
-
-</script>
 </body>
 </html>
